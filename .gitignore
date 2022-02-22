@@ -1,9 +1,3 @@
-# Misc
-.DS_Store
-
-# Firebase
-.firebase/
-
 # Logs
 logs
 *.log
