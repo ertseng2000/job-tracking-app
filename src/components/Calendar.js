@@ -1,22 +1,40 @@
-import React, {Component} from 'react';
-import { Link } from "react-router-dom";
-import './Login.css';
+import React, { useEffect, useState } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '../firebase.js';
+import './Calendar.css';
 
-class Calendar extends Component {
+export default function Calendar() {
 
-  constructor(props) {
-    super(props);
+  const user = auth.currentUser;
+  const [name, setName] = useState('');
+
+  // TODO abstract this function out to a common js file
+  // Firebase auth observer. Sends user back to login page if not signed in
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const uid = user.uid;
+      setName(user.displayName);
+    } else {
+      window.location.href = "/login";
+    }
+  });
+
+  // Logs out user from site
+  const logout = () => { signOut(auth).then(() => {}).catch(error => console.log("Error: " + error.message)) }
+
+  // Navigates user to profile page
+  const profile = () => {
+    window.location.href = "/profile";
   }
 
-  render() {
-    return(
-      <>
-        <h1>Calendar Page</h1>
-        <nav>
-          <Link to="/login">Login</Link>
-        </nav>
-      </>
-    );
-  }
+  return (
+    <>
+      <h1>Calendar Page</h1>
+      <p>Welcome {name}!</p>
+      <nav>
+        <button onClick={profile}>Profile</button>
+        <button onClick={logout}>Logout</button>
+      </nav>
+    </>
+  );
 }
-export default Calendar
