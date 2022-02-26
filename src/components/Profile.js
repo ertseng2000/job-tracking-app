@@ -4,11 +4,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth';
-import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, deleteDoc, query, where } from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Profile.css';
 
 export default function Profile() {
+
+  useEffect(() => {
+    checkIfSignedIn();
+  }, []);
 
   const user = auth.currentUser;
 
@@ -17,8 +21,28 @@ export default function Profile() {
     if (user === null) { window.location.href = "/login" }
   });
 
-  const deleteUser = async () => {
+  // Firebase auth observer. Sends user back to login page if not signed in
+  const checkIfSignedIn = () => {
+    const user = auth.currentUser;
+    onAuthStateChanged(auth, (user) => {
+      if (user === null) {
+        window.location.href="/login";
+        deleteUser(user);
+      }
+    });
+  };
+
+  // Deletes the user and removes all info from database
+  const deleteUser = async (currentUser) => {
     //TODO delete user
+    await getFirestoreData(currentUser);
+  }
+
+  // Query all user data
+  const getFirestoreData = (currentUser) => {
+    let userAppIDs = [];
+    const userPath = 'users/' + currentUser.uid + '/applications';
+    // TODO finish this
   }
 
   return (
