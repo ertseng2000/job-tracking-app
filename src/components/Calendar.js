@@ -56,7 +56,12 @@ export default function Calendar() {
   // Create event
   // TODO: maybe import a nicer looking prompt?
   const createEvent = (date) => {
-    const test = prompt('Does nothing for now');
+    const test = prompt('Maybe add events? Does nothing for now');
+  }
+
+  // TODO: edit event?
+  const editEvent = () => {
+    const test = alert('Suggestion: Takes user to app page to edit');
   }
 
   // Logs out user from site
@@ -74,7 +79,7 @@ export default function Calendar() {
       <>
         <h1>Calendar Page</h1>
         <p>Welcome {name}!</p>
-        <p>Click on a date to add an event</p>
+        <p>Click an event to view more details</p>
         <nav>
           <button onClick={profile}>Profile</button>
           <button onClick={logout}>Logout</button>
@@ -87,6 +92,7 @@ export default function Calendar() {
             initialView = "dayGridMonth"
             events={events}
             dateClick={(e) => createEvent(e.date)}
+            eventClick={(e) => editEvent()}
           />
         </div>
       </>

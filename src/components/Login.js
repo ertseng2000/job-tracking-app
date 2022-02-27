@@ -4,9 +4,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { collection, doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase.js';
+import { auth, db, provider } from '../firebase.js';
 import './Login.css';
 
 export default function Login() {
@@ -34,7 +34,6 @@ export default function Login() {
         displayName: name.trim()
       });
       await initUser(userCredentials.user);
-      window.location.href = "/calendar";
     } catch (error) {
       console.log("Error code: " + error.code);
       console.log("Error message: " + error.message);
@@ -47,7 +46,20 @@ export default function Login() {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = "/calendar";
+    } catch (error) {
+      console.log("Error code: " + error.code);
+      console.log("Error message: " + error.message);
+      errorHandler(error);
+    }
+  };
+
+  // Login a user using GoogleAuthProvider
+  // BUG: sign in w google after sign in w email/pw --> name not updated in firestore
+  const loginGoogleUser = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      setLoading(true);
+      initUser(result.user);
     } catch (error) {
       console.log("Error code: " + error.code);
       console.log("Error message: " + error.message);
@@ -88,13 +100,13 @@ export default function Login() {
       name: user.displayName,
       email: user.email
     }
-    await setDoc(userRef, userInfo);
-  }
+    await setDoc(userRef, userInfo, { merge: true });
+  };
 
   // Sends reset password email
   const forgotPw = async (user) => {
     // TODO Can implement next release
-  }
+  };
 
   // Page loading indicator for async/await stuff
   // IDEA Can add some animation or loading wheel in next release maybe
@@ -120,6 +132,7 @@ export default function Login() {
         <input type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
         <button id='registerButton' onClick={registerUser}>Register</button>
         <button id='loginButton' onClick={loginUser}>Login</button>
+        <button id='google' onClick={loginGoogleUser}>Use Google</button>
         <button id='forgotpwButton' onClick={forgotPw}>Forgot Password</button>
       </div>
     </>
