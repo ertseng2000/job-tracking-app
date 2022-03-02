@@ -1,5 +1,6 @@
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Login from './components/Login.js';
 import Calendar from './components/Calendar.js';
