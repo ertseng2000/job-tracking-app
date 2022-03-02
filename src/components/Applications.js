@@ -8,7 +8,8 @@ import './Applications.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 export default function Applications() {
 
@@ -17,6 +18,10 @@ export default function Applications() {
   }, []);
 
   // Initializing states + variables
+  const [company, setCompany] = useState('');
+  const [position, setPosition] = useState('');
+  const [status, setStatus] = useState('');
+  const [notes, setNotes] = useState('');
   const [name, setName] = useState('');
   const [pageReady, setReady] = useState(false);
   const [applications, setApplications] = useState([{
@@ -60,7 +65,19 @@ export default function Applications() {
   // TODO use addDoc and/or setDoc to add new applications
   // https://firebase.google.com/docs/firestore/manage-data/add-data
   // Path: users/user.uid/applications/[auto-generated ID application]/[auto-gen ID update document]
-
+  const submitApplication = async () => {
+    console.log(company);
+    console.log(position);
+    console.log(status);
+    console.log(notes);
+    const appPath = 'users/' + auth.currentUser.uid + '/applications';
+    await setDoc(doc(collection(db, appPath)), {
+      companyName: company,
+      currentStatus: status,
+      position: position,
+      notes: notes
+    });
+  };
 
   // Logs out user from site
   const logout = () => { signOut(auth).then(() => {}).catch(error => console.log("Error: " + error.message)) }
@@ -84,6 +101,17 @@ export default function Applications() {
           <button onClick={logout}>Logout</button>
           <button onClick={calendar}>Calendar</button>
         </nav>
+
+        <Popup trigger={<button>Add Application</button>} position="right center">
+          <div>Popup content here !!</div>
+          <input type='text' placeholder='Company Name' onChange={(e) => {setCompany(e.target.value)}} />
+          <input type='text' placeholder='Position' onChange={(e) => {setPosition(e.target.value)}} />
+          <input type='text' placeholder='Status' onChange={(e) => {setStatus(e.target.value)}} />
+          <input type='text' placeholder='Notes' onChange={(e) => {setNotes(e.target.value)}} />
+
+          <button id='submitButton' onClick={submitApplication}>Submit</button>
+        </Popup>
+
         <br />
         <Container>
           <Row id = "headings">
