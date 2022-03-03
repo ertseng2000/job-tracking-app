@@ -119,6 +119,7 @@ export default function Login() {
       <h1>Login Page</h1>
       <nav>
         <Link to="/calendar">Calendar</Link>
+        <Link to="/apps">Application List</Link>
       </nav>
       <br />
       <div id='name'>

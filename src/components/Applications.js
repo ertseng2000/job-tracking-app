@@ -29,7 +29,8 @@ export default function Applications() {
     company: '',
     position: '',
     status: '',
-    notes: ''
+    notes: '',
+    id: ''
   }]);
   
 
@@ -59,7 +60,8 @@ export default function Applications() {
         company: doc.data().companyName,
         position: doc.data().position,
         status: doc.data().currentStatus,
-        notes: doc.data().notes
+        notes: doc.data().notes,
+        id: doc.id
       })));
     });
   }
@@ -83,7 +85,7 @@ export default function Applications() {
   // Logs out user from site
   const logout = () => { signOut(auth).then(() => {}).catch(error => console.log("Error: " + error.message)) }
 
-  // Moves to app list page
+  // Moves to calendar page
   const calendar = () => window.location.href = "/calendar";
   
   // Navigates user to profile page
@@ -97,6 +99,7 @@ export default function Applications() {
   };
   // Renders page after loading
   if (pageReady) {
+    
     return (
       <>
         <h1>{name}'s Applications</h1>
@@ -108,7 +111,7 @@ export default function Applications() {
         </nav>
 
         <Popup trigger={<button>Add Application</button>} position="right center">
-          <div>Popup content here !!</div>
+          <div>Fill in this form!</div>
           <input type='text' placeholder='Company Name' onChange={(e) => {setCompany(e.target.value)}} />
           <input type='text' placeholder='Position' onChange={(e) => {setPosition(e.target.value)}} />
           <input type='text' placeholder='Status' onChange={(e) => {setStatus(e.target.value)}} />
