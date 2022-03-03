@@ -10,6 +10,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import { Link } from 'react-router-dom';
 
 export default function Applications() {
 
@@ -88,10 +89,14 @@ export default function Applications() {
   // Navigates user to profile page
   const profile = () => window.location.href = "/profile";
   
-  
+  const goToTimeLine = (application) => {
+    
+    localStorage.setItem('currCompany', application.company);
+    localStorage.setItem('currCompanyId', application.id);
+    window.location.href = "/timeline";
+  };
   // Renders page after loading
   if (pageReady) {
-    
     return (
       <>
         <h1>{name}'s Applications</h1>
@@ -119,6 +124,7 @@ export default function Applications() {
             <Col>Position</Col>
             <Col>Status</Col>
             <Col>Notes</Col>
+            <Col>View Timeline</Col>
           </Row>
           {applications.map((application) =>
             
@@ -127,6 +133,9 @@ export default function Applications() {
             <Col>{application.position}</Col>
             <Col>{application.status}</Col>
             <Col>{application.notes}</Col>
+            <Col>
+            <button id='goButton' onClick={() => {goToTimeLine(application)}}>Go!</button>
+            </Col>
           </Row>
           )}
           

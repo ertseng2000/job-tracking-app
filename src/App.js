@@ -16,7 +16,7 @@ function App() {
         <Route path="calendar" element={<Calendar />} />
         <Route path="profile" element={<Profile />} />
         <Route path="apps" element={<Apps />} />
-        <Route path="timeline/:companyName" element={<Timeline />} />
+        <Route path="timeline" element={<Timeline />} />
         <Route path="login" element={<Login />} />
         <Route path="/" element={<Navigate replace to="/login" />} />
       </Routes>
