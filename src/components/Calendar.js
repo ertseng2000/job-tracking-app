@@ -9,6 +9,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { auth, db } from '../firebase.js';
 import './Calendar.css';
+import NavBarJTR from './Navbar.js';
 
 export default function Calendar() {
 
@@ -64,27 +65,11 @@ export default function Calendar() {
     const test = alert('Suggestion: Takes user to app page to edit');
   }
 
-  // Logs out user from site
-  const logout = () => { signOut(auth).then(() => {}).catch(error => console.log("Error: " + error.message)) }
-
-  // Moves to app list page
-  const apps = () => window.location.href = "/apps";
-
-  // Navigates user to profile page
-  const profile = () => window.location.href = "/profile";
-
   // Renders page after loading
   if (pageReady) {
     return (
       <>
-        <h1>Calendar Page</h1>
-        <p>Welcome {name}!</p>
-        <p>Click an event to view more details</p>
-        <nav>
-          <button onClick={profile}>Profile</button>
-          <button onClick={logout}>Logout</button>
-          <button onClick={apps}>Application List</button>
-        </nav>
+        <NavBarJTR></NavBarJTR>
         <br />
         <div id='calendar'>
           <FullCalendar

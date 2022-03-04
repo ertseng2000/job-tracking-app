@@ -7,6 +7,7 @@ import { onAuthStateChanged, signOut, deleteUser } from 'firebase/auth';
 import { collection, doc, getDocs, deleteDoc, query, where } from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Profile.css';
+import NavBarJTR from './Navbar.js';
 
 export default function Profile() {
 
@@ -47,6 +48,7 @@ export default function Profile() {
 
   return (
     <>
+      <NavBarJTR></NavBarJTR>
       <h1>Profile Page</h1>
       <button id='deleteAccount' onClick={deleteUser}>Delete Account</button>
     </>

@@ -116,11 +116,7 @@ export default function Login() {
 
   return (
     <>
-      <h1>Login Page</h1>
-      <nav>
-        <Link to="/calendar">Calendar</Link>
-        <Link to="/apps">Application List</Link>
-      </nav>
+      <h1>Log In</h1>
       <br />
       <div id='name'>
         <input type='text' placeholder='Your Name' onChange={(e) => {setName(e.target.value)}} />

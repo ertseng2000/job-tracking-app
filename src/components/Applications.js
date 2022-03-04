@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, addDoc } from 'firebase/firestore';
+import { collection, doc, onSnapshot, query, where, setDoc, addDoc, orderBy, limit, getDocs} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Applications.css';
 import Container from 'react-bootstrap/Container';
@@ -10,13 +10,15 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { Link } from 'react-router-dom';
+import NavBarJTR from './Navbar.js';
 
 export default function Applications() {
 
   useEffect(() => {
     checkIfSignedIn();
   }, []);
+
+
 
   // Initializing states + variables
   const [company, setCompany] = useState('');
@@ -33,7 +35,6 @@ export default function Applications() {
     id: ''
   }]);
   
-
   // Firebase auth observer. Sends user back to login page if not signed in
   const checkIfSignedIn = () => {
     const user = auth.currentUser;
@@ -63,6 +64,7 @@ export default function Applications() {
         notes: doc.data().notes,
         id: doc.id
       })));
+      
     });
   }
   // TODO use addDoc and/or setDoc to add new applications
@@ -81,15 +83,6 @@ export default function Applications() {
       notes: notes
     });
   };
-
-  // Logs out user from site
-  const logout = () => { signOut(auth).then(() => {}).catch(error => console.log("Error: " + error.message)) }
-
-  // Moves to calendar page
-  const calendar = () => window.location.href = "/calendar";
-  
-  // Navigates user to profile page
-  const profile = () => window.location.href = "/profile";
   
   const goToTimeLine = (application) => {
     
@@ -97,20 +90,20 @@ export default function Applications() {
     localStorage.setItem('currCompanyId', application.id);
     window.location.href = "/timeline";
   };
+
+  
+  
   // Renders page after loading
   if (pageReady) {
     
     return (
       <>
-        <h1>{name}'s Applications</h1>
+        <NavBarJTR></NavBarJTR>
+        <h1 id = "app-list-title">{name}'s Applications</h1>
         
-        <nav>
-          <button onClick={profile}>Profile</button>
-          <button onClick={logout}>Logout</button>
-          <button onClick={calendar}>Calendar</button>
-        </nav>
+        
 
-        <Popup trigger={<button>Add Application</button>} position="right center">
+        <Popup trigger={<button id = "new-app-button">New Application</button>} position="right center">
           <div>Fill in this form!</div>
           <input type='text' placeholder='Company Name' onChange={(e) => {setCompany(e.target.value)}} />
           <input type='text' placeholder='Position' onChange={(e) => {setPosition(e.target.value)}} />
@@ -131,7 +124,7 @@ export default function Applications() {
           </Row>
           {applications.map((application) =>
             
-            <Row>
+            <Row className = "table-content">
             <Col>{application.company}</Col>
             <Col>{application.position}</Col>
             <Col>{application.status}</Col>

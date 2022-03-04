@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, addDoc , getDocs, deleteDoc, orderBy} from 'firebase/firestore';
+import { collection, doc, onSnapshot, query, where, setDoc, updateDoc , getDocs, deleteDoc, orderBy, limit} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Timeline.css';
 import { useSearchParams } from "react-router-dom";
 import Popup from 'reactjs-popup';
-
+import NavBarJTR from './Navbar.js';
 
 export default function Timeline() {
   
@@ -15,9 +15,6 @@ export default function Timeline() {
     checkIfSignedIn();
   }, []);
   const user = auth.currentUser;
-  
-  
-  
   
   const companyName = localStorage.getItem('currCompany');
   const applicationId = localStorage.getItem('currCompanyId');
@@ -64,18 +61,6 @@ export default function Timeline() {
     });
   }
 
-  // Logs out user from site
-  const logout = () => { signOut(auth).then(() => {}).catch(error => console.log("Error: " + error.message)) }
-
-  // Moves to app list page
-  const apps = () => window.location.href = "/apps";
-
-  // Moves to calendar page
-  const calendar = () => window.location.href = "/calendar";
-
-  // Navigates user to profile page
-  const profile = () => window.location.href = "/profile";
-
   //Deletes current application and redirects to application page
   const deleteApp = async() => {
     //First delete all updates corresponding to the current app
@@ -113,6 +98,7 @@ export default function Timeline() {
       appId: applicationId,
       companyName: companyName
     });
+    await updateStatus();
     
   };
 
@@ -129,6 +115,7 @@ export default function Timeline() {
       appId: applicationId,
       companyName: companyName
     });
+    await updateStatus();
     
   };
 
@@ -137,9 +124,34 @@ export default function Timeline() {
     //First delete all updates corresponding to the current app
     const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
     await deleteDoc(doc(db, updatesPath, id));
+    await updateStatus();
+  };
+  const updateStatus = async() => {
+    const newStatus = await getStatus();
+    const appPath = 'users/' + auth.currentUser.uid + '/applications';
+    const appRef = doc(db, appPath, applicationId);
+    await updateDoc(appRef, {
+      currentStatus: newStatus
+    });
+  }
+  //TODO: optimize this function
+  const getStatus = async () => {
+    const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
+    const q = query(collection(db, updatesPath), where("appId", "==", applicationId));
+    
+    const querySnapshot = await getDocs(q);
+    var docs = querySnapshot.docs;
+    
+    if(docs.length == 0){
+      return "This application has no statuses";
+    }
+    docs.sort((a,b)=> new Date(b.data().date.toDate())- new Date(a.data().date.toDate()));
+    console.log(docs);
+    const tag = docs[0].data().tag;
+    const date = new Date(docs[0].data().date.toDate());
+    return tag + ' ' + date.toDateString();
 
   };
-
   // Renders page after loading
   if (pageReady) {
     events.sort((a,b)=>b.date - a.date);
@@ -148,13 +160,9 @@ export default function Timeline() {
     
     return (
       <>
+        <NavBarJTR></NavBarJTR>
         <h1>{companyName} Application Timeline</h1>
-        <nav>
-          <button onClick={profile}>Profile</button>
-          <button onClick={logout}>Logout</button>
-          <button onClick={apps}>Application List</button>
-          <button onClick={calendar}>Calendar</button>
-        </nav>
+        
         <button onClick={deleteApp}>Delete This Application</button>
         <Popup trigger={<button>New Update</button>} position="right center">
           <div>Fill in this form!</div>

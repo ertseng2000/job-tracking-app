@@ -1,0 +1,28 @@
+#app-list-title{
+    margin-top: 20px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-size: 48px;
+}
+
+#new-app-button{
+    border: none;
+    border-radius: 20px;
+    background-color: #A3EFDD;
+    font-size: 18px;
+    height: 48px;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 20px;
+    opacity: 0.75;
+}
+
+#headings{
+    font-weight: 700;
+    text-align: left;
+}
+.table-content{
+    text-align: left;
+    margin-top: 10px;
+}
