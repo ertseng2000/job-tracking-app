@@ -18,6 +18,14 @@
     opacity: 0.75;
 }
 
+.go-button{
+    border: none;
+    border-radius: 10px;
+    background-color: #A3FFA6;
+    padding: 5px;
+    opacity: 0.75;
+}
+
 #headings{
     font-weight: 700;
     text-align: left;

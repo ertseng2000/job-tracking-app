@@ -63,23 +63,26 @@ export default function Timeline() {
 
   //Deletes current application and redirects to application page
   const deleteApp = async() => {
-    //First delete all updates corresponding to the current app
-    const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
-    const q = query(collection(db, updatesPath), where("appId", "==", applicationId));
+    if(window.confirm("Are you sure you want to delete this application?")== true){
+      //First delete all updates corresponding to the current app
+      const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
+      const q = query(collection(db, updatesPath), where("appId", "==", applicationId));
 
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      doc.ref.delete();
-      console.log(`deleted: ${doc.id}`);
-    });
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        doc.ref.delete();
+        console.log(`deleted: ${doc.id}`);
+      });
 
+
+      //Then delete currect application
+      const appPath = 'users/' + auth.currentUser.uid + '/applications';
+      await deleteDoc(doc(db, appPath, applicationId));
+
+
+      window.location.href = "/apps";
+    }
     
-    //Then delete currect application
-    const appPath = 'users/' + auth.currentUser.uid + '/applications';
-    await deleteDoc(doc(db, appPath, applicationId));
-
-
-    window.location.href = "/apps";
   };
 
   const submitEvent = async () => {
@@ -161,10 +164,9 @@ export default function Timeline() {
     return (
       <>
         <NavBarJTR></NavBarJTR>
-        <h1>{companyName} Application Timeline</h1>
-        
-        <button onClick={deleteApp}>Delete This Application</button>
-        <Popup trigger={<button>New Update</button>} position="right center">
+        <h1 id = "timeline-head">{companyName} Application Timeline</h1>
+
+        <Popup trigger={<button id = "add-update-button">New Update</button>} position="right center">
           <div>Fill in this form!</div>
           <label for="tags">Select an Event Type:</label>
           <select id="tags" name="tags" onChange={(e) => {setTag(e.target.value)}} >
@@ -185,14 +187,16 @@ export default function Timeline() {
           <button id='submitButton' onClick={submitEvent}>Submit</button>
         </Popup>
         <br />
+        <button id = "delete-app-button" onClick={deleteApp}>Delete This Application</button>
+        <br />
 
         {events.map((event) =>
-            <div className = "timeLineSection"> 
-            <h1>{event.tag}</h1>
+            <div className = "timeline-section"> 
+            <h5 className='timeline-tag'>{event.tag}</h5>
             <p>{event.date.toDateString()}</p>
 
             {/* Pop up form for edit event */}
-            <Popup trigger={<button>EDIT</button>} position="right center">
+            <Popup trigger={<button className='timeline-button'>EDIT</button>} position="right center">
               <div>Fill in this form!</div>
               <label for="tags">Select an Event Type:</label>
               <select id="tags" name="tags" onChange={(e) => {setEditTag(e.target.value)}} >
@@ -212,7 +216,7 @@ export default function Timeline() {
 
               <button id='submitButton' onClick={() => submitEditEvent(event.id)}>Submit</button>
             </Popup>
-            <button onClick={() => deleteEvent(event.id)}>DELETE</button>
+            <button className='timeline-button' onClick={() => deleteEvent(event.id)}>DELETE</button>
             </div>
           )}
       </>

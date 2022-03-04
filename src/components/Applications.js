@@ -120,7 +120,7 @@ export default function Applications() {
             <Col>Position</Col>
             <Col>Status</Col>
             <Col>Notes</Col>
-            <Col>View Timeline</Col>
+            <Col>Update/View</Col>
           </Row>
           {applications.map((application) =>
             
@@ -130,7 +130,7 @@ export default function Applications() {
             <Col>{application.status}</Col>
             <Col>{application.notes}</Col>
             <Col>
-            <button id='goButton' onClick={() => {goToTimeLine(application)}}>Go!</button>
+            <button className='go-button' onClick={() => {goToTimeLine(application)}}>Go!</button>
             </Col>
           </Row>
           )}
