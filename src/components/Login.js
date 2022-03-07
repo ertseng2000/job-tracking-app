@@ -116,7 +116,7 @@ export default function Login() {
 
   return (
     <>
-      <h1>Log In</h1>
+      <h1 id = "head">You Job Applications, all in one place</h1>
       <br />
       <div id='name'>
         <input type='text' placeholder='Your Name' onChange={(e) => {setName(e.target.value)}} />
@@ -125,12 +125,14 @@ export default function Login() {
         <p id='errorMessage'>{errorMessage}</p>
       </div>
       <div id='registerLoginUser'>
-        <input type='text' placeholder='email' onChange={(e) => {setEmail(e.target.value)}} />
-        <input type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
-        <button id='registerButton' onClick={registerUser}>Register</button>
-        <button id='loginButton' onClick={loginUser}>Login</button>
-        <button id='google' onClick={loginGoogleUser}>Use Google</button>
-        <button id='forgotpwButton' onClick={forgotPw}>Forgot Password</button>
+        <input id = 'email-input' type='text' placeholder='email' onChange={(e) => {setEmail(e.target.value)}} />
+        <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
+
+        
+        <button id='login-button' onClick={loginUser}>Login</button>
+        <br></br>
+        <button id='register-button' onClick={registerUser}> Don't have an account? Register Now!</button>
+       
       </div>
     </>
   );

@@ -24,7 +24,12 @@ export default function Calendar() {
   const [events, setEvents] = useState([{
     title: '',
     start: '',
-    allDay: true
+    allDay: true,
+    extendedProps: {
+      appId: '',
+      companyName: ''
+    }
+
   }]);
 
   // Firebase auth observer. Sends user back to login page if not signed in
@@ -49,7 +54,12 @@ export default function Calendar() {
       setEvents(querySnapshot.docs.map(doc => ({
         title: doc.data().companyName + ': ' + doc.data().tag,
         start: doc.data().date.toDate(),
-        allDay: true
+        allDay: true,
+        extendedProps: {
+          appId: doc.data().appId,
+          companyName: doc.data().companyName
+        }
+        
       })));
     });
   }
@@ -57,16 +67,26 @@ export default function Calendar() {
   // Create event
   // TODO: maybe import a nicer looking prompt?
   const createEvent = (date) => {
-    const test = prompt('Maybe add events? Does nothing for now');
+    //const test = prompt('Maybe add events? Does nothing for now');
   }
 
   // TODO: edit event?
   const editEvent = () => {
-    const test = alert('Suggestion: Takes user to app page to edit');
+    //const test = alert('Suggestion: Takes user to app page to edit');
   }
+
+  const goToTimeLine = (e) => {
+    console.log(e)
+    localStorage.setItem('currCompany', e.event.extendedProps.companyName);
+    localStorage.setItem('currCompanyId', e.event.extendedProps.appId);
+    localStorage.setItem('event', e);
+   
+    window.location.href = "/timeline";
+  };
 
   // Renders page after loading
   if (pageReady) {
+    console.log(events);
     return (
       <>
         <NavBarJTR></NavBarJTR>
@@ -77,7 +97,8 @@ export default function Calendar() {
             initialView = "dayGridMonth"
             events={events}
             dateClick={(e) => createEvent(e.date)}
-            eventClick={(e) => editEvent()}
+            eventClick={ (e) =>goToTimeLine(e)}
+
           />
         </div>
       </>

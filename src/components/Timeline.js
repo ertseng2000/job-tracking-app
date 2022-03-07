@@ -18,6 +18,7 @@ export default function Timeline() {
   
   const companyName = localStorage.getItem('currCompany');
   const applicationId = localStorage.getItem('currCompanyId');
+  console.log(localStorage.getItem('event'));
   console.log(applicationId)
 
   const [name, setName] = useState('');
