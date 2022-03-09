@@ -17,6 +17,18 @@ export default function Calendar() {
     checkIfSignedIn();
   }, []);
 
+  //Color coding map:
+  const statusColors = new Map([
+    ['Applied', 'grey'],
+    ['Take Home Assessment', 'orange'],
+    ['Phone Screen', 'green'],
+    ['Interview', 'blue'],
+    ['Technical Interview', 'DarkGreen'],
+    ['Final Round Interview', 'purple'],
+    ['Offer', 'DarkGoldenRod'],
+    ['Rejected', 'red']
+
+  ])
   // Initializing states + variables
   let dataArray = [];
   const [name, setName] = useState('');
@@ -31,6 +43,7 @@ export default function Calendar() {
     }
 
   }]);
+
 
   // Firebase auth observer. Sends user back to login page if not signed in
   const checkIfSignedIn = () => {
@@ -58,7 +71,8 @@ export default function Calendar() {
         extendedProps: {
           appId: doc.data().appId,
           companyName: doc.data().companyName
-        }
+        },
+        backgroundColor: statusColors.get(doc.data().tag)
         
       })));
     });

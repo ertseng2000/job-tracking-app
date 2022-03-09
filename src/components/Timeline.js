@@ -20,7 +20,17 @@ export default function Timeline() {
   const applicationId = localStorage.getItem('currCompanyId');
   console.log(localStorage.getItem('event'));
   console.log(applicationId)
-
+  //Color coding map:
+  const statusColors = new Map([
+    ['Applied', 'grey'],
+    ['Take Home Assessment', 'orange'],
+    ['Phone Screen', 'green'],
+    ['Interview', 'blue'],
+    ['Technical Interview', 'DarkGreen'],
+    ['Final Round Interview', 'purple'],
+    ['Offer', 'DarkGoldenRod'],
+    ['Rejected', 'red']
+  ])
   const [name, setName] = useState('');
   const [pageReady, setReady] = useState(false);
   const [events, setEvents] = useState([{
@@ -70,10 +80,19 @@ export default function Timeline() {
       const q = query(collection(db, updatesPath), where("appId", "==", applicationId));
 
       const querySnapshot = await getDocs(q);
+      console.log(querySnapshot)
+      for (const docu of querySnapshot.docs) {
+        
+        await deleteDoc(doc(db, updatesPath, docu.id));
+        console.log(`deleted: ${docu.id}`);
+      }
+      
+      /*
       querySnapshot.forEach((doc) => {
+        console.log(doc.ref);
         doc.ref.delete();
         console.log(`deleted: ${doc.id}`);
-      });
+      });*/
 
 
       //Then delete currect application
@@ -193,7 +212,7 @@ export default function Timeline() {
 
         {events.map((event) =>
             <div className = "timeline-section"> 
-            <h5 className='timeline-tag'>{event.tag}</h5>
+            <h5 className='timeline-tag' >{event.tag}</h5>
             <p>{event.date.toDateString()}</p>
 
             {/* Pop up form for edit event */}
