@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
-import { onAuthStateChanged, signOut, deleteUser, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential } from 'firebase/auth';
+import { onAuthStateChanged, signOut, deleteUser, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { collection, doc, getDocs, deleteDoc, query, where } from 'firebase/firestore';
 import { getStorage, ref } from "firebase/storage";
 import { auth, db, storage } from '../firebase.js';
@@ -13,6 +13,13 @@ export default function Profile() {
 
   const [pageReady, setReady] = useState(false);
   const [updateAcc, setUpdateAcc] = useState(false);
+  const [name, setName] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [pw, setOldPassword] = useState('');
+  const [errorMessage, setError] = useState('');
+
   const stock_img = 'https://firebasestorage.googleapis.com/v0/b/cse437-productivity-app-cc18b.appspot.com/o/profile_stock.png?alt=media&token=d908c915-c951-4fe8-8ea7-2a02b294269d';
 
   useEffect(() => {
@@ -52,14 +59,61 @@ export default function Profile() {
     });
   }
 
-  // Allows users to edit profile
-  const editProfile = async () => {
-    setUpdateAcc(true);
+  const submitEdits = async () => {
+    if (name != '') {
+      try {
+        await updateProfile(user, {
+          displayName: name.trim()
+        });
+      } catch (error) {
+        console.log("Error code: " + error.code);
+        console.log("Error message: " + error.message);
+        setError(errorMessage + 'Error changing name or profile photo!');
+      }
+    }
+
+    if (email != '') {
+      reauthUser();
+      try {
+        await updateEmail(user, email);
+      } catch (error) {
+        console.log("Error code: " + error.code);
+        console.log("Error message: " + error.message);
+        setError(errorMessage + 'Error changing email!');
+      }
+    }
+
+    if (password != '') {
+      reauthUser();
+      try {
+        await updatePassword(user, password);
+      } catch (error) {
+        console.log("Error code: " + error.code);
+        console.log("Error message: " + error.message);
+        setError(errorMessage + 'Error changing password!');
+      }
+    }
+    
+    doneEditing();
   }
+
+  const editProfile = () => {
+    setUpdateAcc(true);
+    setError('');
+  }
+
+  const doneEditing = () => { setUpdateAcc(false) }
 
   // Reauthorizes users for certain actions
   const reauthUser = async () => {
-
+    const userCredentials = EmailAuthProvider.credential(user.email, pw);
+    try {
+      await reauthenticateWithCredential(user, userCredentials);
+    } catch (error) {
+      console.log("Error code: " + error.code);
+      console.log("Error message: " + error.message);
+      setError('Error reauthorizing user!');
+    }
   }
 
   if (!pageReady) {
@@ -74,8 +128,17 @@ export default function Profile() {
     return (
       <>
         <NavBarJTR></NavBarJTR>
-        <h1>Update Account</h1>
+        <h1 class='profileHeader'>Update Account</h1>
 
+        <input type='text' placeholder='New name' onChange={(e) => {setName(e.target.value)}} /><br />
+        <input type='text' placeholder='New email' onChange={(e) => {setEmail(e.target.value)}} /><br />
+        <input type='password' placeholder='New password' onChange={(e) => {setPassword(e.target.value)}} /><br />
+        <br /><br />
+        <input type='password' placeholder='Current password' onChange={(e) => {setOldPassword(e.target.value)}} />
+        <button onClick={submitEdits}>Submit Changes</button>
+        <br />
+        <button onClick={doneEditing}>Return to profile</button>
+        <br />
         <Popup trigger={<button id="deleteAccount"> Delete Account </button>} modal={true}>
           <div id='warning'> Are you sure you want to delete this account?</div>
           <div id='warning2'> This action is irreversible! </div><br />
@@ -87,9 +150,11 @@ export default function Profile() {
     return (
       <>
         <NavBarJTR></NavBarJTR>
-        <h1>Account Information</h1>
-
-        <div id='imgDiv'> <img src={stock_img} /> </div>
+        <h1 class='profileHeader'>Account Information</h1>
+        <div>
+          <p id='errorMessage'>{errorMessage}</p>
+        </div>
+        <div id='imgDiv'> <img src={stock_img} id='profImg'/> </div>
         <div id='userName' class='userInfo'> {user.displayName}</div>
         <div id='userEmail' class='userInfo'> {user.email}</div>
         <br />

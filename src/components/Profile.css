@@ -7,13 +7,13 @@
   font-weight: bold;
 }
 
-img {
+#profImg {
   border-radius: 50%;
   width: 15vh;
   height: 15vh;
 }
 
-h1 {
+#profileHeader {
   margin: 3vh 0 10vh 0;
 }
 
