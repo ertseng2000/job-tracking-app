@@ -1,0 +1,28 @@
+#warning, #warning2, #deleteConfirm {
+  text-align: center;
+}
+
+#warning2, #deleteConfirmButton {
+  color: red;
+  font-weight: bold;
+}
+
+img {
+  border-radius: 50%;
+  width: 15vh;
+  height: 15vh;
+}
+
+h1 {
+  margin: 3vh 0 10vh 0;
+}
+
+#deleteAccount, #edit {
+  position: relative;
+  margin-top: 20%;
+}
+
+#userName, #userEmail {
+  margin-top: 5vh;
+  font-size: 1.5rem;
+}
