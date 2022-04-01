@@ -13,6 +13,10 @@ To run program locally:
 
     npm start
 
+To build program locally:
+
+    npm run build
+    
 Deploy to firebase:
 
     firebase deploy
