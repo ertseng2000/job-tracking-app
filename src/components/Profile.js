@@ -1,26 +1,28 @@
 // User profile page
+// Yes, I realize this is a bit of a mess... I'll fix it if I got time
 
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { onAuthStateChanged, signOut, deleteUser, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { collection, doc, getDocs, deleteDoc, query, where } from 'firebase/firestore';
-import { getStorage, ref } from "firebase/storage";
+import { deleteObject, getStorage, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from '../firebase.js';
 import './Profile.css';
 import NavBarJTR from './Navbar.js';
 
 export default function Profile() {
 
+  const stock_img = 'https://firebasestorage.googleapis.com/v0/b/cse437-productivity-app-cc18b.appspot.com/o/profile_stock.png?alt=media&token=d908c915-c951-4fe8-8ea7-2a02b294269d';
   const [pageReady, setReady] = useState(false);
   const [updateAcc, setUpdateAcc] = useState(false);
   const [name, setName] = useState('');
   const [photo, setPhoto] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [pw, setOldPassword] = useState('');
   const [errorMessage, setError] = useState('');
-
-  const stock_img = 'https://firebasestorage.googleapis.com/v0/b/cse437-productivity-app-cc18b.appspot.com/o/profile_stock.png?alt=media&token=d908c915-c951-4fe8-8ea7-2a02b294269d';
+  const [displayImg, setDisplayImg] = useState(stock_img);
 
   useEffect(() => {
     checkIfSignedIn();
@@ -39,7 +41,10 @@ export default function Profile() {
       if (user) {
         const profilePic = new Image();
         if (user.photoURL === null) { profilePic.src = stock_img }
-        else { profilePic.src = stock_img }
+        else {
+          profilePic.src = user.photoURL;
+          setDisplayImg(user.photoURL);
+        }
         profilePic.onload = () => {
           setReady(true);
         }
@@ -50,7 +55,9 @@ export default function Profile() {
   // Deletes the user and removes all info from database
   const delUsr = async () => {
     const userUID = user.uid;
+    const desertRef = ref(storage, userUID + '/photo');
     await deleteDoc(doc(db, "users", userUID));
+    await deleteObject(desertRef);
 
     deleteUser(user).then(() => {
       window.location.href = "/login";
@@ -59,6 +66,7 @@ export default function Profile() {
     });
   }
 
+  // Submits profile edits to Firebase
   const submitEdits = async () => {
     if (name != '') {
       try {
@@ -68,33 +76,51 @@ export default function Profile() {
       } catch (error) {
         console.log("Error code: " + error.code);
         console.log("Error message: " + error.message);
-        setError(errorMessage + 'Error changing name or profile photo!');
+        setError('Error changing name or profile photo!');
+      }
+    }
+
+    if (photo != '' && photo !== undefined && errorMessage == '') {
+      const storageRef = ref(storage, user.uid + '/photo');
+      try {
+        setReady(false);
+        await uploadBytes(storageRef, photo);
+        const imgURL = await getDownloadURL(storageRef);
+        setDisplayImg(imgURL);
+        await updateProfile(user, {photoURL: imgURL});
+        setReady(true);
+      } catch (error) {
+        console.log("Error code: " + error.code);
+        console.log("Error message: " + error.message);
+        setError('Error changing image!');
       }
     }
 
     if (email != '') {
-      reauthUser();
+      await reauthUser();
       try {
         await updateEmail(user, email);
       } catch (error) {
         console.log("Error code: " + error.code);
         console.log("Error message: " + error.message);
-        setError(errorMessage + 'Error changing email!');
+        setError('Error changing email!');
       }
     }
 
-    if (password != '') {
-      reauthUser();
+    if (password !== confirmPassword) { setError('Password confirmation does not match!') }
+
+    if (password != '' && password === confirmPassword) {
+      await reauthUser();
       try {
         await updatePassword(user, password);
       } catch (error) {
         console.log("Error code: " + error.code);
         console.log("Error message: " + error.message);
-        setError(errorMessage + 'Error changing password!');
+        setError('Error changing password!');
       }
     }
-    
-    doneEditing();
+
+    if (errorMessage == '') { doneEditing() }
   }
 
   const editProfile = () => {
@@ -102,11 +128,23 @@ export default function Profile() {
     setError('');
   }
 
-  const doneEditing = () => { setUpdateAcc(false) }
+  const doneEditing = () => {
+    setUpdateAcc(false);
+    setName('');
+    setPhoto('');
+    setEmail('');
+    setPassword('');
+    setOldPassword('');
+    if (displayImg.charAt(0) == 'd' && user.photoURL == null) { // User leaves w/o saving profile, image shouldn't be saved
+      setDisplayImg(stock_img);
+    }
+    if (user.photoURL != null) { setDisplayImg(user.photoURL) }
+  }
 
   // Reauthorizes users for certain actions
   const reauthUser = async () => {
-    const userCredentials = EmailAuthProvider.credential(user.email, pw);
+    const oldEmail = user.email;
+    const userCredentials = EmailAuthProvider.credential(oldEmail, pw);
     try {
       await reauthenticateWithCredential(user, userCredentials);
     } catch (error) {
@@ -115,6 +153,23 @@ export default function Profile() {
       setError('Error reauthorizing user!');
     }
   }
+
+  // Confirms and display profile photo before uploading to Firebase
+  if (photo !== '' && photo !== undefined) {
+    if (photo.size > 5e6) {
+      setPhoto('');
+      setError('Photo too large! Please upload an image under 5MB');
+    } else {
+      let reader = new FileReader();
+      reader.onload = function () {
+        setDisplayImg(reader.result);
+        setError('');
+      }
+      reader.readAsDataURL(photo);
+    }
+  }
+
+  //if (password !== confirmPassword) { setError('Password confirmation does not match!') }
 
   if (!pageReady) {
     return (
@@ -129,14 +184,22 @@ export default function Profile() {
       <>
         <NavBarJTR></NavBarJTR>
         <h1 class='profileHeader'>Update Account</h1>
-
+        <br />
+        <p id='errorMessage'>{errorMessage}</p>
+        <br />
+        <div id='imgDiv'>
+          <img src={displayImg} id='profImg'/>
+          <input type="file" accept="image/*" id="profilePic" onChange={(e) => setPhoto(e.target.files[0])} /><br />
+        </div>
         <input type='text' placeholder='New name' onChange={(e) => {setName(e.target.value)}} /><br />
         <input type='text' placeholder='New email' onChange={(e) => {setEmail(e.target.value)}} /><br />
         <input type='password' placeholder='New password' onChange={(e) => {setPassword(e.target.value)}} /><br />
+        <input type='password' placeholder='Repeat password' onChange={(e) => {setConfirmPassword(e.target.value)}} /><br />
         <br /><br />
-        <input type='password' placeholder='Current password' onChange={(e) => {setOldPassword(e.target.value)}} />
-        <button onClick={submitEdits}>Submit Changes</button>
-        <br />
+        <p>Enter current password to apply changes</p>
+        <input type='password' placeholder='Current password' onChange={(e) => {setOldPassword(e.target.value)}} /><br /><br />
+        <button onClick={submitEdits}>Save Changes</button>
+        <br /><br />
         <button onClick={doneEditing}>Return to profile</button>
         <br />
         <Popup trigger={<button id="deleteAccount"> Delete Account </button>} modal={true}>
@@ -151,14 +214,15 @@ export default function Profile() {
       <>
         <NavBarJTR></NavBarJTR>
         <h1 class='profileHeader'>Account Information</h1>
-        <div>
-          <p id='errorMessage'>{errorMessage}</p>
-        </div>
-        <div id='imgDiv'> <img src={stock_img} id='profImg'/> </div>
+        <p id='errorMessage'>{errorMessage}</p>
+        <br />
+        <div id='imgDiv'> <img src={displayImg} id='profImg'/> </div>
         <div id='userName' class='userInfo'> {user.displayName}</div>
         <div id='userEmail' class='userInfo'> {user.email}</div>
         <br />
         <button id='edit' onClick={editProfile}> Edit or Delete Account </button>
+
+
       </>
     );
   }
