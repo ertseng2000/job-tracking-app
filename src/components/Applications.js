@@ -23,7 +23,6 @@ export default function Applications() {
   // Initializing states + variables
   const [company, setCompany] = useState('');
   const [position, setPosition] = useState('');
-  const [status, setStatus] = useState('');
   const [notes, setNotes] = useState('');
   const [name, setName] = useState('');
   const [pageReady, setReady] = useState(false);
@@ -73,12 +72,11 @@ export default function Applications() {
   const submitApplication = async () => {
     console.log(company);
     console.log(position);
-    console.log(status);
     console.log(notes);
     const appPath = 'users/' + auth.currentUser.uid + '/applications';
     await setDoc(doc(collection(db, appPath)), {
       companyName: company,
-      currentStatus: status,
+      currentStatus: "No Statuses Yet",
       position: position,
       notes: notes
     });
@@ -107,7 +105,7 @@ export default function Applications() {
           <div>Fill in this form!</div>
           <input type='text' placeholder='Company Name' onChange={(e) => {setCompany(e.target.value)}} />
           <input type='text' placeholder='Position' onChange={(e) => {setPosition(e.target.value)}} />
-          <input type='text' placeholder='Status' onChange={(e) => {setStatus(e.target.value)}} />
+          
           <input type='text' placeholder='Notes' onChange={(e) => {setNotes(e.target.value)}} />
 
           <button id='submitButton' onClick={submitApplication}>Submit</button>
