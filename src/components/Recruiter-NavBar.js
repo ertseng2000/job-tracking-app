@@ -5,7 +5,7 @@ import { auth, db } from '../firebase.js';
 import './Profile.css';
 import {Container, Navbar, Nav} from 'react-bootstrap';
 
-export default function NavBarJTR() {
+export default function RecruiterNavBarJTR() {
 
   
 
@@ -16,13 +16,11 @@ export default function NavBarJTR() {
     <>
     <Navbar bg="light" expand="lg">
         <Container>
-            <Navbar.Brand href="/apps">JTR</Navbar.Brand>
+            <Navbar.Brand href="/recruiter-search">JTR</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
             <Nav >
-                <Nav.Link href="/apps">My Applications</Nav.Link>
-                <Nav.Link href="/calendar">Calendar</Nav.Link>
-                <Nav.Link href="/profile">My Profile</Nav.Link>
+                <Nav.Link href="/recruiter-search">Applicant Search</Nav.Link>
                 <Nav.Link onClick={logout}>Log Out</Nav.Link>
             </Nav>
             </Navbar.Collapse>

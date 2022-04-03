@@ -50,6 +50,7 @@ export default function Calendar() {
     const user = auth.currentUser;
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log(user);
         setName(user.displayName);
         getFirestoreData(auth.currentUser);
         setReady(true);

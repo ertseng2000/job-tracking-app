@@ -7,9 +7,9 @@ import { auth, db } from '../firebase.js';
 import './Timeline.css';
 import { useSearchParams } from "react-router-dom";
 import Popup from 'reactjs-popup';
-import NavBarJTR from './Navbar.js';
+import RecruiterNavBarJTR from './Recruiter-NavBar.js';
 
-export default function Timeline() {
+export default function RecruiterTimeline() {
   
   useEffect(() => {
     checkIfSignedIn();
@@ -17,7 +17,13 @@ export default function Timeline() {
   const user = auth.currentUser;
   
   const companyName = localStorage.getItem('currCompany');
-  const applicationId = localStorage.getItem('currCompanyId');
+  const applicationId = localStorage.getItem('applicationId');
+  const applicantName = localStorage.getItem('applicantName');
+  const applicantId = localStorage.getItem('applicantId');
+  console.log(applicantId)
+  console.log(applicationId)
+  const applicantEmail = localStorage.getItem('applicantEmail');
+
   console.log(localStorage.getItem('event'));
   console.log(applicationId)
   //Color coding map:
@@ -60,7 +66,7 @@ export default function Timeline() {
   };
 
   const getFirestoreData = (currentUser) => {
-    const appPath = 'updates/' + currentUser.uid + '/appUpdates';
+    const appPath = 'updates/' + applicantId + '/appUpdates';
     const dataQuery = query(collection(db, appPath), where("appId", "==", applicationId));
     const unsubscribe = onSnapshot(dataQuery, (querySnapshot) => {
       
@@ -76,7 +82,7 @@ export default function Timeline() {
   const deleteApp = async() => {
     if(window.confirm("Are you sure you want to delete this application?")== true){
       //First delete all updates corresponding to the current app
-      const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
+      const updatesPath = 'updates/' + applicantId + '/appUpdates';
       const q = query(collection(db, updatesPath), where("appId", "==", applicationId));
 
       const querySnapshot = await getDocs(q);
@@ -96,7 +102,7 @@ export default function Timeline() {
 
 
       //Then delete currect application
-      const appPath = 'users/' + auth.currentUser.uid + '/applications';
+      const appPath = 'users/' + applicantId + '/applications';
       await deleteDoc(doc(db, appPath, applicationId));
 
 
@@ -114,7 +120,7 @@ export default function Timeline() {
 
     console.log(asDate);
     
-    const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
+    const updatesPath = 'updates/' + applicantId + '/appUpdates';
     await setDoc(doc(collection(db, updatesPath)), {
       tag: tag,
       date: asDate,
@@ -131,7 +137,7 @@ export default function Timeline() {
     asDate.setDate(asDate.getDate() + 1);
     console.log(asDate);
     
-    const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
+    const updatesPath = 'updates/' + applicantId + '/appUpdates';
     await setDoc(doc(collection(db, updatesPath), id), {
       tag: editTag,
       date: asDate,
@@ -145,13 +151,13 @@ export default function Timeline() {
   //Deletes current application and redirects to application page
   const deleteEvent = async(id) => {
     //First delete all updates corresponding to the current app
-    const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
+    const updatesPath = 'updates/' + applicantId + '/appUpdates';
     await deleteDoc(doc(db, updatesPath, id));
     await updateStatus();
   };
   const updateStatus = async() => {
     const newStatus = await getStatus();
-    const appPath = 'users/' + auth.currentUser.uid + '/applications';
+    const appPath = 'users/' + applicantId + '/applications';
     const appRef = doc(db, appPath, applicationId);
     await updateDoc(appRef, {
       currentStatus: newStatus
@@ -159,7 +165,7 @@ export default function Timeline() {
   }
   //TODO: optimize this function
   const getStatus = async () => {
-    const updatesPath = 'updates/' + auth.currentUser.uid + '/appUpdates';
+    const updatesPath = 'updates/' + applicantId + '/appUpdates';
     const q = query(collection(db, updatesPath), where("appId", "==", applicationId));
     
     const querySnapshot = await getDocs(q);
@@ -183,10 +189,9 @@ export default function Timeline() {
     
     return (
       <>
-        <NavBarJTR></NavBarJTR>
-        <h1 id = "timeline-head">{companyName} Application Timeline</h1>
+        <RecruiterNavBarJTR></RecruiterNavBarJTR>
+        <h1 id = "timeline-head">{applicantName}'s Timeline</h1>
 
-        {/*
         <Popup trigger={<button id = "add-update-button">New Update</button>} position="right center">
           <div>Fill in this form!</div>
           <label for="tags">Select an Event Type:</label>
@@ -210,8 +215,6 @@ export default function Timeline() {
         <br />
         <button id = "delete-app-button" onClick={deleteApp}>Delete This Application</button>
         <br />
-        */}
-        
 
         {events.map((event) =>
             <div className = "timeline-section"> 
@@ -219,7 +222,7 @@ export default function Timeline() {
             <p>{event.date.toDateString()}</p>
 
             {/* Pop up form for edit event */}
-            {/*<Popup trigger={<button className='timeline-button'>EDIT</button>} position="right center">
+            <Popup trigger={<button className='timeline-button'>EDIT</button>} position="right center">
               <div>Fill in this form!</div>
               <label for="tags">Select an Event Type:</label>
               <select id="tags" name="tags" onChange={(e) => {setEditTag(e.target.value)}} >
@@ -239,8 +242,7 @@ export default function Timeline() {
 
               <button id='submitButton' onClick={() => submitEditEvent(event.id)}>Submit</button>
             </Popup>
-            <button className='timeline-button' onClick={() => deleteEvent(event.id)}>DELETE</button>*/}
-            
+            <button className='timeline-button' onClick={() => deleteEvent(event.id)}>DELETE</button>
             </div>
           )}
       </>

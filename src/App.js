@@ -7,6 +7,10 @@ import Calendar from './components/Calendar.js';
 import Profile from './components/Profile.js';
 import Apps from './components/Applications.js';
 import Timeline from './components/Timeline.js';
+import RecruiterLogin from './components/Recruiter-Login.js';
+import RecruiterSearch from './components/Recruiter-Search.js';
+import RecruiterApplications from './components/Recruiter-Applications';
+import RecruiterTimeline from './components/Recruiter-Timeline';
 import { auth, db } from './firebase.js';
 
 function App() {
@@ -18,6 +22,10 @@ function App() {
         <Route path="apps" element={<Apps />} />
         <Route path="timeline" element={<Timeline />} />
         <Route path="login" element={<Login />} />
+        <Route path="recruiter-login" element={<RecruiterLogin />} />
+        <Route path="recruiter-search" element={<RecruiterSearch />} />
+        <Route path="recruiter-apps" element={<RecruiterApplications />} />
+        <Route path="recruiter-timeline" element={<RecruiterTimeline />} />
         <Route path="/" element={<Navigate replace to="/login" />} />
       </Routes>
     </div>

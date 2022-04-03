@@ -7,16 +7,15 @@ import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
-import './Login.css';
+import './Recruiter-Login.css';
 
-export default function Login() {
+export default function RecruiterLogin() {
 
   useEffect(() => {
     checkIfSignedIn();
   }, []);
 
-  // Initializing states
-  const [email, setEmail] = useState('');
+  
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [errorMessage, setError] = useState('');
@@ -29,6 +28,8 @@ export default function Login() {
         throw "empty name";
       }
       setLoading(true);
+      const email = name + "@"+ name+".com";
+      console.log(email);
       const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredentials.user, {
         displayName: name.trim()
@@ -45,6 +46,7 @@ export default function Login() {
   const loginUser = async () => {
     try {
       setLoading(true);
+      const email = name + "@"+ name+".com";
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.log("Error code: " + error.code);
@@ -53,19 +55,7 @@ export default function Login() {
     }
   };
 
-  // Login a user using GoogleAuthProvider
-  // BUG: sign in w google after sign in w email/pw --> name not updated in firestore
-  const loginGoogleUser = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      setLoading(true);
-      initUser(result.user);
-    } catch (error) {
-      console.log("Error code: " + error.code);
-      console.log("Error message: " + error.message);
-      errorHandler(error);
-    }
-  };
+  
 
   // Handles potential errors during login
   const errorHandler = (error) => {
@@ -88,12 +78,9 @@ export default function Login() {
     const user = auth.currentUser;
     onAuthStateChanged(auth, (user) => {
       if (user && user.displayName !== null) {
-        window.location.href="/calendar";
+        window.location.href="/recruiter-search";
       }
     });
-  };
-  const goToRecruiterLogin = () => {
-    window.location.href="/recruiter-login";
   };
 
   // Initializes user in database upon registering
@@ -101,7 +88,8 @@ export default function Login() {
     const userRef = doc(db, "users", user.uid);
     const userInfo = {
       name: user.displayName,
-      email: user.email
+      email: user.email,
+      isRecruiter: "true"
     }
     await setDoc(userRef, userInfo, { merge: true });
   };
@@ -109,6 +97,9 @@ export default function Login() {
   // Sends reset password email
   const forgotPw = async (user) => {
     // TODO Can implement next release
+  };
+  const goToApplicantLogin = () => {
+    window.location.href="/login";
   };
 
   // Page loading indicator for async/await stuff
@@ -119,24 +110,23 @@ export default function Login() {
 
   return (
     <>
-      <h1 id = "head">You Job Applications, all in one place</h1>
+      <h1 id = "head">JTR Recruiter Login</h1>
       <br />
       <div id='name'>
-        <input type='text' placeholder='Your Name' onChange={(e) => {setName(e.target.value)}} />
+        <input type='text' placeholder='ex: Amazon' onChange={(e) => {setName(e.target.value)}} />
       </div>
       <div>
         <p id='errorMessage'>{errorMessage}</p>
       </div>
       <div id='registerLoginUser'>
-        <input id = 'email-input' type='text' placeholder='email' onChange={(e) => {setEmail(e.target.value)}} />
         <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
 
         
         <button id='login-button' onClick={loginUser}>Login</button>
         <br></br>
         <button id='register-button' onClick={registerUser}> Don't have an account? Register Now!</button>
-        <button id='recruiter-button' onClick={(goToRecruiterLogin)}> I'm a recruiter</button>
        
+        <button id='recruiter-button' onClick={(goToApplicantLogin)}> I'm an applicant</button>
       </div>
     </>
   );
