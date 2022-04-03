@@ -1,7 +1,7 @@
 #timeline-head{
     font-weight: 700;
     margin-top: 20px;
-    
+    margin-bottom: 40px;
 }
 
 #add-update-button{
@@ -32,7 +32,7 @@
     width:300px;
     margin: 0 auto;
     padding: 10px;
-    margin-bottom: 20px;
+    margin-top: 20px;
 }
 .timeline-tag{
     font-weight: 700;

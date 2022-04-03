@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { collection, doc, onSnapshot, query, where, setDoc, updateDoc , getDocs, deleteDoc, orderBy, limit} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
-import './Timeline.css';
+import './Recruiter-Timeline.css';
 import { useSearchParams } from "react-router-dom";
 import Popup from 'reactjs-popup';
 import RecruiterNavBarJTR from './Recruiter-NavBar.js';

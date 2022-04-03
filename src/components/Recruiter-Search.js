@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { collection, doc, onSnapshot, query, where, setDoc, addDoc, orderBy, limit, getDocs} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
-import './Applications.css';
+import './Recruiter-Search.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -12,7 +12,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import RecruiterNavBarJTR from './Recruiter-NavBar.js';
 
-export default function Applications() {
+export default function RecruiterSearch() {
 
   useEffect(() => {
     checkIfSignedIn();
@@ -91,15 +91,15 @@ export default function Applications() {
     return (
       <>
         <RecruiterNavBarJTR></RecruiterNavBarJTR>
-        <h1 id = "app-list-title">Enter An Applicant's Email</h1>
-        <div id='emailInputWrapper'>
+        <h1 id = "search-head">Enter An Applicant's Email</h1>
+        <div id='email-input-wrapper'>
             <input type='text' placeholder='ex: jeffbezos@hotmail.com' onChange={(e) => {setApplicantEmail(e.target.value)}} />
         </div>
 
-        <button id='submitButton' onClick={searchApplicant}>Search</button>
+        <button id='submitButton' onClick={searchApplicant}>Search!</button>
 
         <br></br>
-
+        <hr/>
         {renderSearchedApplicant()}
       </>
     );
