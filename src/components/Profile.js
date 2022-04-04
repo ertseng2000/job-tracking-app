@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { onAuthStateChanged, deleteUser, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-import { doc, deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from '../firebase.js';
 import './Profile.css';
@@ -131,7 +131,7 @@ export default function Profile() {
     setError('');
   }
 
-  const doneEditing = () => {
+  const doneEditing = async () => {
     setUpdateAcc(false);
     setName('');
     setPhoto('');
@@ -142,6 +142,14 @@ export default function Profile() {
       setDisplayImg(stock_img);
     }
     if (user.photoURL != null) { setDisplayImg(user.photoURL) }
+    const docRef = doc(db, 'users', user.uid);
+    try {
+      await updateDoc(docRef, {
+        email: user.email,
+        name: user.displayName
+      });
+    }
+    catch (error) { console.log("Error updating user email in db!") }
   }
 
   // Reauthorizes users for certain actions
