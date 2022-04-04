@@ -92,6 +92,12 @@ export default function Login() {
       }
     });
   };
+
+  // Firebase auth observer
+  onAuthStateChanged(auth, (user) => {
+    if (user !== null) { window.location.href = "/calendar" }
+  });
+
   const goToRecruiterLogin = () => {
     window.location.href="/recruiter-login";
   };
@@ -131,12 +137,12 @@ export default function Login() {
         <input id = 'email-input' type='text' placeholder='email' onChange={(e) => {setEmail(e.target.value)}} />
         <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
 
-        
+
         <button id='login-button' onClick={loginUser}>Login</button>
         <br></br>
         <button id='register-button' onClick={registerUser}> Don't have an account? Register Now!</button>
         <button id='recruiter-button' onClick={(goToRecruiterLogin)}> I'm a recruiter</button>
-       
+
       </div>
     </>
   );
