@@ -98,6 +98,10 @@ export default function Login() {
     if (user !== null) { window.location.href = "/calendar" }
   });
 
+  const goToRegister= () => {
+    window.location.href="/register";
+  };
+
   const goToRecruiterLogin = () => {
     window.location.href="/recruiter-login";
   };
@@ -127,9 +131,6 @@ export default function Login() {
     <>
       <h1 id = "head">You Job Applications, all in one place</h1>
       <br />
-      <div id='name'>
-        <input type='text' placeholder='Your Name' onChange={(e) => {setName(e.target.value)}} />
-      </div>
       <div>
         <p id='errorMessage'>{errorMessage}</p>
       </div>
@@ -140,7 +141,7 @@ export default function Login() {
 
         <button id='login-button' onClick={loginUser}>Login</button>
         <br></br>
-        <button id='register-button' onClick={registerUser}> Don't have an account? Register Now!</button>
+        <button id='register-button' onClick={goToRegister}> Don't have an account? Register Now!</button>
         <button id='recruiter-button' onClick={(goToRecruiterLogin)}> I'm a recruiter</button>
 
       </div>

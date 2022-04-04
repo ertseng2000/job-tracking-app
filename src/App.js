@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Login from './components/Login.js';
+import Register from "./components/Register";
 import Calendar from './components/Calendar.js';
 import Profile from './components/Profile.js';
 import Apps from './components/Applications.js';
@@ -22,6 +23,7 @@ function App() {
         <Route path="apps" element={<Apps />} />
         <Route path="timeline" element={<Timeline />} />
         <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
         <Route path="recruiter-login" element={<RecruiterLogin />} />
         <Route path="recruiter-search" element={<RecruiterSearch />} />
         <Route path="recruiter-apps" element={<RecruiterApplications />} />
