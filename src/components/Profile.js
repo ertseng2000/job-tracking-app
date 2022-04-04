@@ -3,9 +3,9 @@
 
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
-import { onAuthStateChanged, signOut, deleteUser, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-import { collection, doc, getDocs, deleteDoc, query, where } from 'firebase/firestore';
-import { deleteObject, getStorage, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { onAuthStateChanged, deleteUser, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from '../firebase.js';
 import './Profile.css';
 import NavBarJTR from './Navbar.js';
@@ -54,10 +54,13 @@ export default function Profile() {
 
   // Deletes the user and removes all info from database
   const delUsr = async () => {
+    await reauthUser();
     const userUID = user.uid;
     const desertRef = ref(storage, userUID + '/photo');
-    await deleteDoc(doc(db, "users", userUID));
-    await deleteObject(desertRef);
+    try { await deleteDoc(doc(db, "users", userUID)) }
+    catch (error) { console.log("No user applications found to delete.") }
+    try { await deleteObject(desertRef) }
+    catch (error) { console.log("No profile pic to delete") }
 
     deleteUser(user).then(() => {
       window.location.href = "/login";
@@ -68,7 +71,7 @@ export default function Profile() {
 
   // Submits profile edits to Firebase
   const submitEdits = async () => {
-    if (name != '') {
+    if (name !== '') {
       try {
         await updateProfile(user, {
           displayName: name.trim()
@@ -80,7 +83,7 @@ export default function Profile() {
       }
     }
 
-    if (photo != '' && photo !== undefined && errorMessage == '') {
+    if (photo !== '' && photo !== undefined && errorMessage === '') {
       const storageRef = ref(storage, user.uid + '/photo');
       try {
         setReady(false);
@@ -96,7 +99,7 @@ export default function Profile() {
       }
     }
 
-    if (email != '') {
+    if (email !== '') {
       await reauthUser();
       try {
         await updateEmail(user, email);
@@ -109,7 +112,7 @@ export default function Profile() {
 
     if (password !== confirmPassword) { setError('Password confirmation does not match!') }
 
-    if (password != '' && password === confirmPassword) {
+    if (password !== '' && password === confirmPassword) {
       await reauthUser();
       try {
         await updatePassword(user, password);
@@ -120,7 +123,7 @@ export default function Profile() {
       }
     }
 
-    if (errorMessage == '') { doneEditing() }
+    if (errorMessage === '') { doneEditing() }
   }
 
   const editProfile = () => {
@@ -135,7 +138,7 @@ export default function Profile() {
     setEmail('');
     setPassword('');
     setOldPassword('');
-    if (displayImg.charAt(0) == 'd' && user.photoURL == null) { // User leaves w/o saving profile, image shouldn't be saved
+    if (displayImg.charAt(0) === 'd' && user.photoURL === null) { // User leaves w/o saving profile, image shouldn't be saved
       setDisplayImg(stock_img);
     }
     if (user.photoURL != null) { setDisplayImg(user.photoURL) }
@@ -188,7 +191,7 @@ export default function Profile() {
         <p id='errorMessage'>{errorMessage}</p>
         <br />
         <div id='imgDiv'>
-          <img src={displayImg} id='profImg'/>
+          <img src={displayImg} id='profImg' alt='profile pic' />
           <input type="file" accept="image/*" id="profilePic" onChange={(e) => setPhoto(e.target.files[0])} /><br />
         </div>
         <input type='text' placeholder='New name' onChange={(e) => {setName(e.target.value)}} /><br />
@@ -196,7 +199,7 @@ export default function Profile() {
         <input type='password' placeholder='New password' onChange={(e) => {setPassword(e.target.value)}} /><br />
         <input type='password' placeholder='Repeat password' onChange={(e) => {setConfirmPassword(e.target.value)}} /><br />
         <br /><br />
-        <p>Enter current password to apply changes</p>
+        <p>Enter current password to apply changes or delete account</p>
         <input type='password' placeholder='Current password' onChange={(e) => {setOldPassword(e.target.value)}} /><br /><br />
         <button onClick={submitEdits}>Save Changes</button>
         <br /><br />
@@ -216,7 +219,7 @@ export default function Profile() {
         <h1 class='profileHeader'>Account Information</h1>
         <p id='errorMessage'>{errorMessage}</p>
         <br />
-        <div id='imgDiv'> <img src={displayImg} id='profImg'/> </div>
+        <div id='imgDiv'> <img src={displayImg} id='profImg' alt='profile pic' /> </div>
         <div id='userName' class='userInfo'> {user.displayName}</div>
         <div id='userEmail' class='userInfo'> {user.email}</div>
         <br />
