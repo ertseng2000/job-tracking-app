@@ -28,6 +28,7 @@ const registerUser = async () => {
             displayName: name.trim()
         });
         await initUser(userCredentials.user);
+        window.location.href="/calendar";
     } catch (error) {
         console.log("Error code: " + error.code);
         console.log("Error message: " + error.message);
@@ -42,6 +43,7 @@ const registerUser = async () => {
             email: user.email
         }
         await setDoc(userRef, userInfo, { merge: true });
+        window.location.href="/calendar";
     };
 
     const checkIfSignedIn = () => {
@@ -52,10 +54,6 @@ const registerUser = async () => {
             }
         });
     };
-
-    // onAuthStateChanged(auth, (user) => {
-    //     if (user !== null) { window.location.href = "/calendar" }
-    // });
 
     const errorHandler = (error) => {
         setLoading(false);
