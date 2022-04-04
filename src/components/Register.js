@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile, } from 'firebase/auth';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Register.css';
@@ -69,7 +69,7 @@ const registerUser = async () => {
     };
     return (
         <>
-            <h1 id = "head">You Job Applications, all in one place</h1>
+            <h1 id = "head">JTR Registration</h1>
             <br />
             <div id='name'>
                 <input type='text' placeholder='Your Name' onChange={(e) => {setName(e.target.value)}} />

@@ -68,6 +68,7 @@ export default function Login() {
   };
 
   // Handles potential errors during login
+  // TODO: change errors to be for login only
   const errorHandler = (error) => {
     setLoading(false);
     if (error.code == "auth/email-already-in-use") {
@@ -129,7 +130,7 @@ export default function Login() {
 
   return (
     <>
-      <h1 id = "head">You Job Applications, all in one place</h1>
+      <h1 id = "head">JTR Login</h1>
       <br />
       <div>
         <p id='errorMessage'>{errorMessage}</p>
