@@ -129,7 +129,7 @@ export default function Login() {
 
   return (
     <>
-      <h1 id = "head">You Job Applications, all in one place</h1>
+      <h1 id = "head">JTR Login</h1>
       <br />
       <div>
         <p id='errorMessage'>{errorMessage}</p>

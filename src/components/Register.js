@@ -69,7 +69,7 @@ const registerUser = async () => {
     };
     return (
         <>
-            <h1 id = "head">You Job Applications, all in one place</h1>
+            <h1 id = "head">JTR Registration</h1>
             <br />
             <div id='name'>
                 <input type='text' placeholder='Your Name' onChange={(e) => {setName(e.target.value)}} />
