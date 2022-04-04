@@ -68,6 +68,7 @@ export default function Login() {
   };
 
   // Handles potential errors during login
+  // TODO: change errors to be for login only
   const errorHandler = (error) => {
     setLoading(false);
     if (error.code == "auth/email-already-in-use") {

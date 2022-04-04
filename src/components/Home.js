@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
-import { collection, doc, setDoc } from 'firebase/firestore';
-import { auth, db, provider } from '../firebase.js';
+import { onAuthStateChanged} from 'firebase/auth';
+import { auth } from '../firebase.js';
 import './Home.css';
 
 const goToRegister = () => {
@@ -35,13 +33,10 @@ export default function Home(){
         <>
             <h1 id = "head">You Job Applications, all in one place</h1>
             <br />
-
             <div id='registerLoginUser'>
-
                 <button id='login-button' onClick={goToLogin}>Login</button>
-                <br></br>
-                <button id='register-button' onClick={goToRegister}> Don't have an account? Register Now!</button>
-                <button id='recruiter-button' onClick={(goToRecruiterLogin)}> I'm a recruiter</button>
+                <button id='register-button' onClick={goToRegister}> Register</button>
+                <button id='recruiter-button' onClick={(goToRecruiterLogin)}> Recruiter Site</button>
             </div>
         </>
     );
