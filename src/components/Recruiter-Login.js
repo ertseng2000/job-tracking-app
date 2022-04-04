@@ -15,7 +15,11 @@ export default function RecruiterLogin() {
     checkIfSignedIn();
   }, []);
 
-  
+  // Firebase auth observer
+  onAuthStateChanged(auth, (user) => {
+    if (user !== null) { window.location.href = "/recruiter-search" }
+  });
+
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [errorMessage, setError] = useState('');
@@ -55,7 +59,7 @@ export default function RecruiterLogin() {
     }
   };
 
-  
+
 
   // Handles potential errors during login
   const errorHandler = (error) => {
@@ -121,11 +125,11 @@ export default function RecruiterLogin() {
       <div id='registerLoginUser'>
         <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
 
-        
+
         <button id='login-button' onClick={loginUser}>Login</button>
         <br></br>
         <button id='register-button' onClick={registerUser}> Don't have an account? Register Now!</button>
-       
+
         <button id='recruiter-button' onClick={(goToApplicantLogin)}> I'm an applicant</button>
       </div>
     </>
