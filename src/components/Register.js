@@ -13,6 +13,10 @@ const [name, setName] = useState('');
 const [errorMessage, setError] = useState('');
 const [loading, setLoading] = useState(false);
 
+useEffect(() => {
+  checkIfSignedIn();
+}, []);
+
 const registerUser = async () => {
     try {
         if (name.trim() === '') {
@@ -49,9 +53,9 @@ const registerUser = async () => {
         });
     };
 
-    onAuthStateChanged(auth, (user) => {
-        if (user !== null) { window.location.href = "/calendar" }
-    });
+    // onAuthStateChanged(auth, (user) => {
+    //     if (user !== null) { window.location.href = "/calendar" }
+    // });
 
     const errorHandler = (error) => {
         setLoading(false);
