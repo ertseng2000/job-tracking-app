@@ -1,7 +1,9 @@
-import {createUserWithEmailAndPassword, updateProfile} from "firebase/auth";
-import {auth, db} from "../firebase";
-import React, {useState} from "react";
-import {doc, setDoc} from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { collection, doc, setDoc } from 'firebase/firestore';
+import { auth, db, provider } from '../firebase.js';
+import './Register.css';
 
 export default function Register() {
 
@@ -37,6 +39,19 @@ const registerUser = async () => {
         }
         await setDoc(userRef, userInfo, { merge: true });
     };
+
+    const checkIfSignedIn = () => {
+        const user = auth.currentUser;
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.displayName !== null) {
+                window.location.href="/calendar";
+            }
+        });
+    };
+
+    onAuthStateChanged(auth, (user) => {
+        if (user !== null) { window.location.href = "/calendar" }
+    });
 
     const errorHandler = (error) => {
         setLoading(false);
