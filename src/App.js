@@ -9,6 +9,7 @@ import Profile from './components/Profile.js';
 import Apps from './components/Applications.js';
 import Timeline from './components/Timeline.js';
 import RecruiterLogin from './components/Recruiter-Login.js';
+import RecruiterRegistration from './components/Recruiter-Registration.js';
 import RecruiterSearch from './components/Recruiter-Search.js';
 import RecruiterApplications from './components/Recruiter-Applications';
 import RecruiterTimeline from './components/Recruiter-Timeline';
@@ -27,6 +28,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="recruiter-login" element={<RecruiterLogin />} />
+        <Route path="recruiter-registration" element={<RecruiterRegistration />} />
         <Route path="recruiter-search" element={<RecruiterSearch />} />
         <Route path="recruiter-apps" element={<RecruiterApplications />} />
         <Route path="recruiter-timeline" element={<RecruiterTimeline />} />

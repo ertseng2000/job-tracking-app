@@ -62,6 +62,12 @@ export default function RecruiterSearch() {
         })
     }else{
         console.log("no results");
+        setSearchedApplicant({
+          name: '',
+          email: '',
+          id: ''
+      
+      })
     }
     
   }

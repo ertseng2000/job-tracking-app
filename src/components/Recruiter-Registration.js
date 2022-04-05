@@ -9,7 +9,7 @@ import { collection, doc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Recruiter-Login.css';
 
-export default function RecruiterLogin() {
+export default function RecruiterRegistration() {
 
   useEffect(() => {
     checkIfSignedIn();
@@ -105,10 +105,10 @@ export default function RecruiterLogin() {
   const goToApplicantLogin = () => {
     window.location.href="/login";
   };
-  const goToRecruiterRegister = () => {
-    window.location.href="/recruiter-registration";
-  };
 
+  const goToRecruiterLogin = () =>{
+    window.location.href="/recruiter-login";
+  }
   // Page loading indicator for async/await stuff
   // IDEA Can add some animation or loading wheel in next release maybe
   if(loading) return (
@@ -117,7 +117,7 @@ export default function RecruiterLogin() {
 
   return (
     <>
-      <h1 id = "head">JTR Recruiter Login</h1>
+      <h1 id = "head">JTR Recruiter Registration</h1>
       <br />
       <div id='name'>
         <input type='text' placeholder='ex: Amazon' onChange={(e) => {setName(e.target.value)}} />
@@ -129,10 +129,10 @@ export default function RecruiterLogin() {
         <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
 
 
-        <button id='login-button' onClick={loginUser}>Login</button>
+        <button id='register-button' onClick={registerUser}> Register</button>
         <br></br>
-        <button id='register-button' onClick={goToRecruiterRegister}> Don't have an account? Register Now!</button>
-
+        
+        <button id='login-button' onClick={goToRecruiterLogin}>Already have an account? Log In!</button>
         <button id='recruiter-button' onClick={(goToApplicantLogin)}> I'm an applicant</button>
       </div>
     </>

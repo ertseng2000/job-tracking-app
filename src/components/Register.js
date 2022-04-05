@@ -54,6 +54,13 @@ const registerUser = async () => {
             }
         });
     };
+    const goToLogin= () => {
+        window.location.href="/login";
+      };
+    
+      const goToRecruiterLogin = () => {
+        window.location.href="/recruiter-login";
+      };
 
     const errorHandler = (error) => {
         setLoading(false);
@@ -84,6 +91,8 @@ const registerUser = async () => {
                 <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
                 <button id='register-button' onClick={registerUser}>Register</button>
                 <br></br>
+                <button id='login-button' onClick={goToLogin}>Already have an account? Log In!</button>
+                <button id='recruiter-button' onClick={(goToRecruiterLogin)}> I'm an recruiter</button>
             </div>
         </>
     );
