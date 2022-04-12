@@ -106,7 +106,7 @@ export default function RecruiterTimeline() {
       await deleteDoc(doc(db, appPath, applicationId));
 
 
-      window.location.href = "/apps";
+      window.location.href = "/recruiter-apps";
     }
     
   };

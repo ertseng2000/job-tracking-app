@@ -25,6 +25,9 @@ export default function Applications() {
   const [position, setPosition] = useState('');
   const [notes, setNotes] = useState('');
   const [name, setName] = useState('');
+  const [statusFilter, setStatusFilter] = useState('None');
+  
+  
   const [pageReady, setReady] = useState(false);
   const [applications, setApplications] = useState([{
     company: '',
@@ -90,7 +93,25 @@ export default function Applications() {
   };
 
   
-  
+  const getFilteredApplications = () =>{
+    var filteredApplications = applications;
+    if(statusFilter !== 'None'){
+      filteredApplications = filteredApplications.filter((application => trimStatus(application.status) === statusFilter))
+    }
+    return filteredApplications;
+  }
+
+  const handleStatusFilterChange = (event) =>{
+    console.log(event.target.value)
+    setStatusFilter(event.target.value)
+  }
+
+  //Remove date from statusString
+  //Ex: Interview Wed Apr 13 2022  -> Interview
+  const trimStatus =  (statusString) =>{
+    //Date string is 15 chars, + a space between status and date
+    return statusString.substring(0, statusString.length - 16)
+  }
   // Renders page after loading
   if (pageReady) {
     
@@ -121,17 +142,37 @@ export default function Applications() {
           <Row id = "headings">
             <Col>Company</Col>
             <Col>Position</Col>
-            <Col>Status</Col>
+            <Col>Status
+            
+            <select value={statusFilter} onChange={handleStatusFilterChange}>
+              <option value="None">None</option>
+              <option value="Applied">Applied</option>
+              <option value="Take Home Assessment">Take Home Assessment</option>
+              <option value="Phone Screen">Phone Screen</option>
+              <option value="Interview">Interview</option>
+              <option value="Technical Interview">Technical Interview</option>
+              <option value="Final Round Interview">Final Round Interview</option>
+              <option value="Offer">Offer</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            
+            </Col>
             <Col>Notes</Col>
             <Col>Update/View</Col>
           </Row>
-          {applications.map((application) =>
+          {getFilteredApplications().map((application) =>
             
             <Row className = "table-content">
             <Col>{application.company}</Col>
             <Col>{application.position}</Col>
             <Col>{application.status}</Col>
-            <Col>{application.notes}</Col>
+            <Col>
+            
+            <Popup trigger={<button id = "notes-button">Notes</button>} position="right center" on="hover">
+              {application.notes}
+            </Popup>
+            
+            </Col>
             <Col>
             <button className='go-button' onClick={() => {goToTimeLine(application)}}>Go!</button>
             </Col>
