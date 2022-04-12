@@ -11,14 +11,16 @@ import './Recruiter-Login.css';
 
 export default function RecruiterLogin() {
 
+  var recruiter = true;
+
   useEffect(() => {
     checkIfSignedIn();
   }, []);
 
   // Firebase auth observer
-  onAuthStateChanged(auth, (user) => {
-    if (user !== null) { window.location.href = "/recruiter-search" }
-  });
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user !== null) { window.location.href = "/recruiter-search" }
+  // });
 
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -85,7 +87,9 @@ export default function RecruiterLogin() {
     onAuthStateChanged(auth, (user) => {
       if (user && user.displayName !== null) {
         checkIfRecruiter(user);
-        window.location.href="/recruiter-search";
+        if (recruiter) {
+          //window.location.href="/recruiter-search";
+        }
       }
     });
   };
@@ -97,6 +101,7 @@ export default function RecruiterLogin() {
     try {
       if (docSnap.exists()) {
         if (docSnap.data().isRecruiter === null || docSnap.data().isRecruiter === undefined) {
+          recruiter = false;
           throw "is applicant";
         }
       }
