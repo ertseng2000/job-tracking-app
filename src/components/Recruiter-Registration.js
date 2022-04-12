@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Recruiter-Login.css';
 
@@ -16,11 +16,12 @@ export default function RecruiterRegistration() {
   }, []);
 
   // Firebase auth observer
-  onAuthStateChanged(auth, (user) => {
-    if (user !== null) { window.location.href = "/recruiter-search" }
-  });
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user !== null) { window.location.href = "/recruiter-search" }
+  // });
 
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [errorMessage, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,6 +31,10 @@ export default function RecruiterRegistration() {
     try {
       if (name.trim() === '') {
         throw "empty name";
+      } else if (/\s/.test(name)) {
+        throw "name spaces";
+      } else if (password !== confirmPassword) {
+        throw "password no match";
       }
       setLoading(true);
       const email = name + "@"+ name+".com";
@@ -59,7 +64,18 @@ export default function RecruiterRegistration() {
     }
   };
 
+  const checkIfRecruiter = async (currUser) => {
+    const docRef = doc(db, "users", currUser.uid)
+    const docSnap = await getDoc(docRef);
 
+    if (docSnap.exists()) {
+      if (docSnap.data().isRecruiter === null || docSnap.data().isRecruiter === undefined) {
+        window.location.href="/recruiter-login";
+      }
+    } else {
+      console.log("Error reading isRecruiter flag");
+      }
+  }
 
   // Handles potential errors during login
   const errorHandler = (error) => {
@@ -72,6 +88,10 @@ export default function RecruiterRegistration() {
       setError("Login details are invalid. Please try again.");
     } else if (error == "empty name") {
       setError("A valid name is required to register!");
+    } else if (error == "name spaces") {
+      setError("Please omit spaces from company name!");
+    } else if (error == "password no match") {
+      setError("Passwords do not match!");
     } else {
       setError("An unknown error occurred. Please try again later.");
     }
@@ -96,6 +116,7 @@ export default function RecruiterRegistration() {
       isRecruiter: "true"
     }
     await setDoc(userRef, userInfo, { merge: true });
+    window.location.href="/recruiter-search";
   };
 
   // Sends reset password email
@@ -126,12 +147,12 @@ export default function RecruiterRegistration() {
         <p id='errorMessage'>{errorMessage}</p>
       </div>
       <div id='registerLoginUser'>
-        <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
-
+        <input id = 'password-input' type='password' placeholder='Password' onChange={(e) => {setPassword(e.target.value)}} />
+        <input id = 'password-conf' type='password' placeholder='Confirm Password' onChange={(e) => {setConfirmPassword(e.target.value)}} />
 
         <button id='register-button' onClick={registerUser}> Register</button>
         <br></br>
-        
+
         <button id='login-button' onClick={goToRecruiterLogin}>Already have an account? Log In!</button>
         <button id='recruiter-button' onClick={(goToApplicantLogin)}> I'm an applicant</button>
       </div>

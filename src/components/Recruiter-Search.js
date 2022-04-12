@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, addDoc, orderBy, limit, getDocs} from 'firebase/firestore';
+import { collection, doc, onSnapshot, query, where, getDoc, getDocs} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Recruiter-Search.css';
 import Container from 'react-bootstrap/Container';
@@ -29,22 +29,35 @@ export default function RecruiterSearch() {
     email: '',
     id: ''
   });
-  
-  
+
+
   // Firebase auth observer. Sends user back to login page if not signed in
   const checkIfSignedIn = () => {
     const user = auth.currentUser;
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        checkIfRecruiter(user);
         setCompany(user.displayName);
         setReady(true);
       } else {
-        window.location.href="/recruiter-login"
+        window.location.href="/recruiter-login";
       }
     });
   };
 
- 
+  const checkIfRecruiter = async (currUser) => {
+    const docRef = doc(db, "users", currUser.uid)
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isRecruiter === null || docSnap.data().isRecruiter === undefined) {
+        window.location.href="/recruiter-login"
+      }
+    } else {
+      console.log("Error reading isRecruiter flag");
+      }
+  }
+
   const searchApplicant = async() => {
     const usersPath = 'users';
     const q = query(collection(db, usersPath), where("email", "==", applicantEmail));
@@ -58,7 +71,7 @@ export default function RecruiterSearch() {
             name: res.data().name,
             email: res.data().email,
             id: res.id
-        
+
         })
     }else{
         console.log("no results");
@@ -66,15 +79,15 @@ export default function RecruiterSearch() {
           name: '',
           email: '',
           id: ''
-      
+
       })
     }
-    
-  }
-  
-  
 
-  
+  }
+
+
+
+
   const renderSearchedApplicant = () => {
       if(searchedApplicant.id !== ''){
           return <>
@@ -93,7 +106,7 @@ export default function RecruiterSearch() {
   }
   // Renders page after loading
   if (pageReady) {
-    
+
     return (
       <>
         <RecruiterNavBarJTR></RecruiterNavBarJTR>

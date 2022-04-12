@@ -20,6 +20,6 @@
 #email-input{
     margin-right: 10px;
 }
-#password-input{
+#password-input, #password-conf{
     margin-right: 10px;
 }

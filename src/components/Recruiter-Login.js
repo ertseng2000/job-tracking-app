@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Recruiter-Login.css';
 
@@ -72,6 +72,8 @@ export default function RecruiterLogin() {
       setError("Login details are invalid. Please try again.");
     } else if (error == "empty name") {
       setError("A valid name is required to register!");
+    } else if (error = "is applicant") {
+      setError("User is already an applicant and cannot be a recruiter!");
     } else {
       setError("An unknown error occurred. Please try again later.");
     }
@@ -82,10 +84,27 @@ export default function RecruiterLogin() {
     const user = auth.currentUser;
     onAuthStateChanged(auth, (user) => {
       if (user && user.displayName !== null) {
+        checkIfRecruiter(user);
         window.location.href="/recruiter-search";
       }
     });
   };
+
+  const checkIfRecruiter = async (currUser) => {
+    const docRef = doc(db, "users", currUser.uid)
+    const docSnap = await getDoc(docRef);
+
+    try {
+      if (docSnap.exists()) {
+        if (docSnap.data().isRecruiter === null || docSnap.data().isRecruiter === undefined) {
+          throw "is applicant";
+        }
+      }
+    } catch (error) {
+      errorHandler(error);
+    }
+
+  }
 
   // Initializes user in database upon registering
   const initUser = async (user) => {

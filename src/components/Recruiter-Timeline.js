@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, updateDoc , getDocs, deleteDoc, orderBy, limit} from 'firebase/firestore';
+import { collection, doc, onSnapshot, query, where, setDoc, updateDoc , getDocs, deleteDoc, getDoc} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Recruiter-Timeline.css';
 import { useSearchParams } from "react-router-dom";
@@ -10,12 +10,12 @@ import Popup from 'reactjs-popup';
 import RecruiterNavBarJTR from './Recruiter-NavBar.js';
 
 export default function RecruiterTimeline() {
-  
+
   useEffect(() => {
     checkIfSignedIn();
   }, []);
   const user = auth.currentUser;
-  
+
   const companyName = localStorage.getItem('currCompany');
   const applicationId = localStorage.getItem('applicationId');
   const applicantName = localStorage.getItem('applicantName');
@@ -53,23 +53,36 @@ export default function RecruiterTimeline() {
 
   // Firebase auth observer. Sends user back to login page if not signed in
   const checkIfSignedIn = () => {
-    const user = auth.currentUser;
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        checkIfRecruiter(user);
         setName(user.displayName);
         getFirestoreData(auth.currentUser);
         setReady(true);
       } else {
-        window.location.href="/login"
+        window.location.href="/login";
       }
     });
   };
+
+  const checkIfRecruiter = async (currUser) => {
+    const docRef = doc(db, "users", currUser.uid)
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isRecruiter === null || docSnap.data().isRecruiter === undefined) {
+        window.location.href="/recruiter-login";
+      }
+    } else {
+      console.log("Error reading isRecruiter flag");
+      }
+  }
 
   const getFirestoreData = (currentUser) => {
     const appPath = 'updates/' + applicantId + '/appUpdates';
     const dataQuery = query(collection(db, appPath), where("appId", "==", applicationId));
     const unsubscribe = onSnapshot(dataQuery, (querySnapshot) => {
-      
+
       setEvents(querySnapshot.docs.map(doc => ({
         tag: doc.data().tag,
         date: new Date(doc.data().date.toDate()),
@@ -88,11 +101,11 @@ export default function RecruiterTimeline() {
       const querySnapshot = await getDocs(q);
       console.log(querySnapshot)
       for (const docu of querySnapshot.docs) {
-        
+
         await deleteDoc(doc(db, updatesPath, docu.id));
         console.log(`deleted: ${docu.id}`);
       }
-      
+
       /*
       querySnapshot.forEach((doc) => {
         console.log(doc.ref);
@@ -108,7 +121,7 @@ export default function RecruiterTimeline() {
 
       window.location.href = "/recruiter-apps";
     }
-    
+
   };
 
   const submitEvent = async () => {
@@ -119,7 +132,7 @@ export default function RecruiterTimeline() {
     asDate.setDate(asDate.getDate() + 1);
 
     console.log(asDate);
-    
+
     const updatesPath = 'updates/' + applicantId + '/appUpdates';
     await setDoc(doc(collection(db, updatesPath)), {
       tag: tag,
@@ -128,7 +141,7 @@ export default function RecruiterTimeline() {
       companyName: companyName
     });
     await updateStatus();
-    
+
   };
 
   const submitEditEvent = async (id) => {
@@ -136,7 +149,7 @@ export default function RecruiterTimeline() {
     const asDate = new Date(editDate);
     asDate.setDate(asDate.getDate() + 1);
     console.log(asDate);
-    
+
     const updatesPath = 'updates/' + applicantId + '/appUpdates';
     await setDoc(doc(collection(db, updatesPath), id), {
       tag: editTag,
@@ -145,7 +158,7 @@ export default function RecruiterTimeline() {
       companyName: companyName
     });
     await updateStatus();
-    
+
   };
 
   //Deletes current application and redirects to application page
@@ -167,10 +180,10 @@ export default function RecruiterTimeline() {
   const getStatus = async () => {
     const updatesPath = 'updates/' + applicantId + '/appUpdates';
     const q = query(collection(db, updatesPath), where("appId", "==", applicationId));
-    
+
     const querySnapshot = await getDocs(q);
     var docs = querySnapshot.docs;
-    
+
     if(docs.length == 0){
       return "This application has no statuses";
     }
@@ -186,7 +199,7 @@ export default function RecruiterTimeline() {
     events.sort((a,b)=>b.date - a.date);
     console.log(events);
     console.log(companyName);
-    
+
     return (
       <>
         <RecruiterNavBarJTR></RecruiterNavBarJTR>
@@ -204,11 +217,11 @@ export default function RecruiterTimeline() {
             <option value="Final Round Interview">Final Round Interview</option>
             <option value="Offer">Offer</option>
             <option value="Rejected">Rejected</option>
-            
-            
+
+
           </select>
           <input type='date' onChange={(e) => {setDate(e.target.value)}} />
-          
+
 
           <button id='submitButton' onClick={submitEvent}>Submit</button>
         </Popup>
@@ -217,7 +230,7 @@ export default function RecruiterTimeline() {
         <br />
 
         {events.map((event) =>
-            <div className = "timeline-section"> 
+            <div className = "timeline-section">
             <h5 className='timeline-tag' >{event.tag}</h5>
             <p>{event.date.toDateString()}</p>
 
@@ -234,11 +247,11 @@ export default function RecruiterTimeline() {
                 <option value="Final Round Interview">Final Round Interview</option>
                 <option value="Offer">Offer</option>
                 <option value="Rejected">Rejected</option>
-                
-                
+
+
               </select>
               <input type='date' onChange={(e) => {setEditDate(e.target.value)}} />
-              
+
 
               <button id='submitButton' onClick={() => submitEditEvent(event.id)}>Submit</button>
             </Popup>
