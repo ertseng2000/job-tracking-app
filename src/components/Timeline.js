@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, updateDoc , getDocs, deleteDoc, orderBy, limit} from 'firebase/firestore';
+import { collection, doc, onSnapshot, query, where, setDoc, getDoc, updateDoc , getDocs, deleteDoc, orderBy, limit} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Timeline.css';
 import { useSearchParams } from "react-router-dom";
@@ -44,6 +44,15 @@ export default function Timeline() {
   const [editTag, setEditTag] = useState('Applied');
   const [editDate, setEditDate] = useState('');
 
+  const [editNotes, setEditNotes] = useState('');
+
+  const [application, setApplication] = useState({
+    company: '',
+    position: '',
+    status: '',
+    notes: '',
+    id: ''
+  });
 
   // Firebase auth observer. Sends user back to login page if not signed in
   const checkIfSignedIn = () => {
@@ -51,7 +60,8 @@ export default function Timeline() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setName(user.displayName);
-        getFirestoreData(auth.currentUser);
+        getFirestoreUpdatesData(auth.currentUser);
+        getFirestoreApplicationData(auth.currentUser);
         setReady(true);
       } else {
         window.location.href="/login"
@@ -59,7 +69,7 @@ export default function Timeline() {
     });
   };
 
-  const getFirestoreData = (currentUser) => {
+  const getFirestoreUpdatesData = (currentUser) => {
     const appPath = 'updates/' + currentUser.uid + '/appUpdates';
     const dataQuery = query(collection(db, appPath), where("appId", "==", applicationId));
     const unsubscribe = onSnapshot(dataQuery, (querySnapshot) => {
@@ -70,6 +80,24 @@ export default function Timeline() {
         id: doc.id
       })));
     });
+  }
+
+  const getFirestoreApplicationData = async(currentUser) => {
+    const appPath = 'users/' + currentUser.uid + '/applications';
+    const docRef = doc(db, appPath, applicationId);
+
+    const docSnap = await getDoc(docRef);
+
+    if(docSnap.exists()){
+      setApplication({
+        company: docSnap.data().companyName,
+        position: docSnap.data().position,
+        status: docSnap.data().currentStatus,
+        notes: docSnap.data().notes
+      })
+    }else{
+      console.log("Failed to get application notes")
+    }
   }
 
   //Deletes current application and redirects to application page
@@ -142,6 +170,22 @@ export default function Timeline() {
     
   };
 
+  const submitEditNotes = async () => {
+    console.log(editNotes);
+    
+    const appPath = 'users/' + auth.currentUser.uid + '/applications';
+    const docRef = doc(db, appPath, applicationId);
+    
+    await setDoc(docRef, {
+      companyName: application.company,
+      currentStatus: application.status,
+      position: application.position,
+      notes: editNotes
+    });
+    await getFirestoreApplicationData(auth.currentUser)
+    
+  };
+
   //Deletes current application and redirects to application page
   const deleteEvent = async(id) => {
     //First delete all updates corresponding to the current app
@@ -211,11 +255,19 @@ export default function Timeline() {
         <button id = "delete-app-button" onClick={deleteApp}>Delete This Application</button>
         <br />
         */}
-        
+        <p>Notes: {application.notes}</p>
+        <Popup trigger={<button className='timeline-button'>EDIT NOTES</button>} position="right center">
+              <div>Edit Notes</div>
+              
+              <input type='text' onChange={(e) => {setEditNotes(e.target.value)}} />
+              
 
+              <button id='submitButton' onClick={() => submitEditNotes()}>Submit</button>
+            </Popup>
         {events.map((event) =>
             <div className = "timeline-section"> 
             <h5 className='timeline-tag' >{event.tag}</h5>
+           
             <p>{event.date.toDateString()}</p>
 
             {/* Pop up form for edit event */}
