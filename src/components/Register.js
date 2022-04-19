@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile, } fr
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Register.css';
+import { ChakraProvider, Stack, Button, FormControl, FormErrorMessage, FormLabel, Input} from '@chakra-ui/react';
 
 export default function Register() {
 
@@ -18,7 +19,8 @@ useEffect(() => {
   checkIfSignedIn();
 }, []);
 
-const registerUser = async () => {
+const registerUser = async (event) => {
+    event.preventDefault();
     try {
         if (name.trim() === '') {
             throw "empty name";
@@ -80,25 +82,60 @@ const registerUser = async () => {
             setError("An unknown error occurred. Please try again later.");
         }
     };
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+    }
+
     return (
-        <>
+        <ChakraProvider>
             <h1 id="head">JTR Registration</h1>
-            <br />
-            <div id='name'>
-                <input type='text' placeholder='Your Name' onChange={(e) => {setName(e.target.value)}} />
-            </div>
-            <div>
-                <p id='errorMessage'>{errorMessage}</p>
-            </div>
-            <div id='registerLoginUser'>
-                <input id='email-input' type='text' placeholder='email' onChange={(e) => {setEmail(e.target.value)}} />
-                <input id='password-input' type='password' placeholder='Password' onChange={(e) => {setPassword(e.target.value)}} />
-                <input id='password-conf' type='password' placeholder='Confirm Password' onChange={(e) => {setConfirmPassword(e.target.value)}} />
-                <button id='register-button' onClick={registerUser}>Register</button>
-                <br></br>
-                <button id='login-button' onClick={goToLogin}>Already have an account? Log In!</button>
-                <button id='recruiter-button' onClick={(goToRecruiterLogin)}> I'm a recruiter</button>
-            </div>
-        </>
+            <form onSubmit={registerUser}>
+                <Stack maxWidth='60vw' margin='auto' spacing='2vh'>
+                    <FormControl isRequired>
+                        <FormLabel htmlfor='name'>Your Name</FormLabel>
+                        <Input
+                            id='name'
+                            type='name'
+                            onChange={(e) => {setName(e.target.value)}}
+                        />
+                    </FormControl>
+                    <FormControl isRequired>
+                        <FormLabel htmlfor='email'>Email Address</FormLabel>
+                        <Input
+                            id='email-input'
+                            type='email'
+                            onChange={(e) => {setEmail(e.target.value)}}
+                        />
+                    </FormControl>
+                    <Stack direction={['column', 'row']} maxWidth='60vw' margin='auto' spacing='2vw'>
+                        <FormControl isRequired>
+                            <FormLabel htmlfor='password'>Password</FormLabel>
+                            <Input
+                                id='password-input'
+                                type='password'
+                                onChange={(e) => {setPassword(e.target.value)}}
+                            />
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormLabel htmlfor='password'>Confirm Password</FormLabel>
+                            <Input
+                                id='password-input'
+                                type='password'
+                                onChange={(e) => {setConfirmPassword(e.target.value)}}
+                            />
+                        </FormControl>
+                    </Stack>
+                    <p id='errorMessage'>{errorMessage}</p>
+                    <FormControl>
+                        <Button colorScheme='teal' size='sm' variant='outline' type='submit'>Register</Button>
+                    </FormControl>
+                </Stack>
+            </form>
+            <Stack maxWidth='25vw' margin='auto' spacing='2vh' marginTop='5vh'>
+                <Button colorSceme='teal' size='sm' variant='ghost' onClick={goToLogin}>Already have an account? Log In!</Button>
+                <Button colorSceme='teal' size='sm' variant='ghost' onClick={goToRecruiterLogin}>I'm a recruiter</Button>
+            </Stack>
+        </ChakraProvider>
     );
 }

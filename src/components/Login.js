@@ -5,8 +5,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithP
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Login.css';
-import { ChakraProvider } from '@chakra-ui/react';
-import { Stack, Button, FormControl, FormErrorMessage, FormLabel, Input} from '@chakra-ui/react';
+import { ChakraProvider, Stack, Button, FormControl, FormErrorMessage, FormLabel, Input} from '@chakra-ui/react';
 
 export default function Login() {
 
@@ -17,28 +16,8 @@ export default function Login() {
   // Initializing states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [errorMessage, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Register a user with email & pw using Firebase Auth
-  const registerUser = async () => {
-    try {
-      if (name.trim() === '') {
-        throw "empty name";
-      }
-      setLoading(true);
-      const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredentials.user, {
-        displayName: name.trim()
-      });
-      await initUser(userCredentials.user);
-    } catch (error) {
-      console.log("Error code: " + error.code);
-      console.log("Error message: " + error.message);
-      errorHandler(error);
-    }
-  };
 
   // Login a user with email & pw using Firebase Auth
   const loginUser = async () => {
@@ -125,6 +104,8 @@ export default function Login() {
     <p id='loadingPage'>Loading...</p>
   );
 
+  const onSubmit = (e) => { e.preventDefault() }
+
   return (
       <ChakraProvider>
         <h1 id="head">JTR Login</h1>
@@ -157,6 +138,5 @@ export default function Login() {
           <Button colorSceme='teal' size='sm' variant='ghost' onClick={goToRecruiterLogin}>I'm a recruiter</Button>
         </Stack>
       </ChakraProvider>
-
   );
 }
