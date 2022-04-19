@@ -1,7 +1,7 @@
 // Displays timeline for application
 
 import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { collection, doc, onSnapshot, query, where, setDoc, getDoc, updateDoc , getDocs, deleteDoc, orderBy, limit} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Timeline.css';
@@ -64,7 +64,7 @@ export default function Timeline() {
         getFirestoreApplicationData(auth.currentUser);
         setReady(true);
       } else {
-        window.location.href="/login"
+        window.location.href="/home";
       }
     });
   };

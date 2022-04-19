@@ -1,13 +1,12 @@
 // Login page for JTR
-// NOTE Will *consider* using FirebaseUI for Auth in next release (might be too lazy)
-// https://firebase.google.com/docs/auth/web/firebaseui
 
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Login.css';
+import { ChakraProvider } from '@chakra-ui/react';
+import { Stack, Button, FormControl, FormErrorMessage, FormLabel, Input} from '@chakra-ui/react';
 
 export default function Login() {
 
@@ -129,23 +128,37 @@ export default function Login() {
   );
 
   return (
-    <>
-      <h1 id = "head">JTR Login</h1>
-      <br />
-      <div>
-        <p id='errorMessage'>{errorMessage}</p>
-      </div>
-      <div id='registerLoginUser'>
-        <input id = 'email-input' type='text' placeholder='email' onChange={(e) => {setEmail(e.target.value)}} />
-        <input id = 'password-input' type='password' placeholder='password' onChange={(e) => {setPassword(e.target.value)}} />
+      <ChakraProvider>
+        <h1 id="head">JTR Login</h1>
+        <form onSubmit={loginUser}>
+          <Stack maxWidth='60vw' margin='auto' spacing='2vh'>
+            <FormControl isRequired>
+              <FormLabel htmlfor='email'>Email Address</FormLabel>
+              <Input
+                  id='email-input'
+                  type='email'
+                  onChange={(e) => {setEmail(e.target.value)}}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel htmlfor='password'>Password</FormLabel>
+              <Input
+                  id='password-input'
+                  type='password'
+                  onChange={(e) => {setPassword(e.target.value)}}
+              />
+            </FormControl>
+            <p id='errorMessage'>{errorMessage}</p>
+            <FormControl>
+              <Button colorScheme='teal' size='sm' variant='outline' type='submit'>Login</Button>
+            </FormControl>
+          </Stack>
+        </form>
+        <Stack maxWidth='25vw' margin='auto' spacing='2vh' marginTop='5vh'>
+          <Button colorSceme='teal' size='sm' variant='ghost' onClick={goToRegister}>Don't have an account? Register Now!</Button>
+          <Button colorSceme='teal' size='sm' variant='ghost' onClick={goToRecruiterLogin}>I'm a recruiter</Button>
+        </Stack>
+      </ChakraProvider>
 
-
-        <button id='login-button' onClick={loginUser}>Login</button>
-        <br></br>
-        <button id='register-button' onClick={goToRegister}> Don't have an account? Register Now!</button>
-        <button id='recruiter-button' onClick={(goToRecruiterLogin)}> I'm a recruiter</button>
-
-      </div>
-    </>
   );
 }

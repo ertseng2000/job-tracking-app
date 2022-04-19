@@ -1,8 +1,8 @@
 // Displays list of applications
 
 import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, addDoc, orderBy, limit, getDocs} from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, doc, onSnapshot, query, setDoc} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Applications.css';
 import Container from 'react-bootstrap/Container';
@@ -46,7 +46,7 @@ export default function Applications() {
         getFirestoreData(auth.currentUser);
         setReady(true);
       } else {
-        window.location.href="/login"
+        window.location.href="/home";
       }
     });
   };

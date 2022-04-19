@@ -31,7 +31,7 @@ export default function Home(){
 
     return(
         <>
-            <h1 id = "head">You Job Applications, all in one place</h1>
+            <h1 id="head">Your Job Applications, all in one place</h1>
             <br />
             <div id='registerLoginUser'>
                 <button id='login-button' onClick={goToLogin}>Login</button>

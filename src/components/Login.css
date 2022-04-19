@@ -7,16 +7,12 @@
 }
 
 #head{
-  font-weight: 700;
+  font-weight: bold;
+  font-size: 3rem;
+  margin-bottom: 10vh;
 }
 
 #login-button{
   margin-top: 10px;
 }
 
-#email-input{
-  margin-right: 10px;
-}
-#password-input{
-  margin-right: 10px;
-}

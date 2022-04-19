@@ -32,7 +32,7 @@ export default function Profile() {
 
   // Firebase auth observer. Sends user back to login page if not signed in
   onAuthStateChanged(auth, (user) => {
-    if (user === null) { window.location.href = "/login" }
+    if (user === null) { window.location.href = "/home" }
   });
 
   // Firebase auth observer. Sends user back to login page if not signed in

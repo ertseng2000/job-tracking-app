@@ -2,8 +2,8 @@
 // https://fullcalendar.io/
 
 import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, setDoc, addDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, onSnapshot, query } from 'firebase/firestore';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -55,7 +55,7 @@ export default function Calendar() {
         getFirestoreData(auth.currentUser);
         setReady(true);
       } else {
-        window.location.href="/login"
+        window.location.href="/home";
       }
     });
   };
