@@ -70,14 +70,12 @@ export default function Login() {
   // TODO: change errors to be for login only
   const errorHandler = (error) => {
     setLoading(false);
-    if (error.code == "auth/email-already-in-use") {
+    if (error.code === "auth/email-already-in-use") {
       setError("Cannot register user, email already in use! Please try resetting password!");
-    } else if (error.code == "auth/weak-password") {
+    } else if (error.code === "auth/weak-password") {
       setError("Password must be at least 6 characters long!");
-    } else if (error.code == "auth/invalid-email" || error.code == "auth/user-not-found" || error.code == "auth/wrong-password") {
+    } else if (error.code === "auth/invalid-email" || error.code == "auth/user-not-found" || error.code === "auth/wrong-password") {
       setError("Login details are invalid. Please try again.");
-    } else if (error == "empty name") {
-      setError("A valid name is required to register!");
     } else {
       setError("An unknown error occurred. Please try again later.");
     }

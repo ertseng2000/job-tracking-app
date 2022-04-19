@@ -113,7 +113,7 @@ export default function Calendar() {
             events={events}
             dateClick={(e) => createEvent(e.date)}
             eventClick={ (e) =>goToTimeLine(e)}
-
+          	height='85vh'
           />
         </div>
       </>
