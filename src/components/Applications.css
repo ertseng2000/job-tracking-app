@@ -29,6 +29,8 @@
 #headings{
     font-weight: 700;
     text-align: left;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
 }
 .table-content{
     text-align: left;

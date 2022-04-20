@@ -1,5 +1,6 @@
 #timeline-head{
-    font-weight: 700;
+    font-weight: bold;
+    font-size: 3rem;
     margin-top: 20px;
     margin-bottom: 40px;
 }

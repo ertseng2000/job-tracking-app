@@ -11,6 +11,7 @@ import Col from 'react-bootstrap/Col';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import NavBarJTR from './Navbar.js';
+import { ChakraProvider, Button} from '@chakra-ui/react';
 
 export default function Applications() {
 
@@ -116,7 +117,7 @@ export default function Applications() {
   if (pageReady) {
     
     return (
-      <>
+      <ChakraProvider>
         <NavBarJTR></NavBarJTR>
         <h1 id = "app-list-title">{name}'s Applications</h1>
         
@@ -168,7 +169,7 @@ export default function Applications() {
             <Col>{application.status}</Col>
             <Col>
             
-            <Popup trigger={<button id = "notes-button">Notes</button>} position="right center" on="hover">
+            <Popup trigger={<Button id = "notes-button" colorScheme='gray' variant='ghost' size='sm'>Notes</Button>} position="right center" on="hover">
               {application.notes}
             </Popup>
             
@@ -180,7 +181,7 @@ export default function Applications() {
           )}
           
         </Container>
-      </>
+      </ChakraProvider>
     );
   }
 

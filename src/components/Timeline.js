@@ -8,6 +8,7 @@ import './Timeline.css';
 import { useSearchParams } from "react-router-dom";
 import Popup from 'reactjs-popup';
 import NavBarJTR from './Navbar.js';
+import { ChakraProvider, Button} from '@chakra-ui/react';
 
 export default function Timeline() {
   
@@ -226,9 +227,9 @@ export default function Timeline() {
     console.log(companyName);
     
     return (
-      <>
+      <ChakraProvider>
         <NavBarJTR></NavBarJTR>
-        <h1 id = "timeline-head">{companyName} Application Timeline</h1>
+        <h1 id="timeline-head">{companyName} Application Timeline</h1>
 
         {/*
         <Popup trigger={<button id = "add-update-button">New Update</button>} position="right center">
@@ -255,15 +256,15 @@ export default function Timeline() {
         <button id = "delete-app-button" onClick={deleteApp}>Delete This Application</button>
         <br />
         */}
-        <p>Notes: {application.notes}</p>
-        <Popup trigger={<button className='timeline-button'>EDIT NOTES</button>} position="right center">
+        <p style={{marginTop:"3vh", marginBottom: "3vh"}}>Notes: {application.notes}</p>
+        <Popup trigger={<Button className='timeline-button' colorScheme='gray' size='sm'>EDIT NOTES</Button>} position="right center">
               <div>Edit Notes</div>
               
-              <input type='text' onChange={(e) => {setEditNotes(e.target.value)}} />
+              <input style={{marginTop:"1vh", marginBottom: "1vh"}} type='text' onChange={(e) => {setEditNotes(e.target.value)}} />
               
 
-              <button id='submitButton' onClick={() => submitEditNotes()}>Submit</button>
-            </Popup>
+              <Button id='submitButton' colorScheme='gray' size='sm' onClick={() => submitEditNotes()}>Submit</Button>
+        </Popup>
         {events.map((event) =>
             <div className = "timeline-section"> 
             <h5 className='timeline-tag' >{event.tag}</h5>
@@ -295,7 +296,7 @@ export default function Timeline() {
             
             </div>
           )}
-      </>
+      </ChakraProvider>
     );
   }
 
