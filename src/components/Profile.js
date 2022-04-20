@@ -9,7 +9,7 @@ import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage
 import { auth, db, storage } from '../firebase.js';
 import './Profile.css';
 import NavBarJTR from './Navbar.js';
-import { ChakraProvider, Stack, Button, Center, FormControl, FormErrorMessage, FormLabel, Input, SimpleGrid} from '@chakra-ui/react';
+import { ChakraProvider, Stack, Button, Center, FormControl, FormHelperText, FormLabel, Input, SimpleGrid} from '@chakra-ui/react';
 
 export default function Profile() {
 
@@ -56,6 +56,7 @@ export default function Profile() {
 
   // Deletes the user and removes all info from database
   const delUsr = async () => {
+    setReady(false);
     await reauthUser();
     const userUID = user.uid;
     const desertRef = ref(storage, userUID + '/photo');
@@ -113,8 +114,6 @@ export default function Profile() {
       }
     }
 
-    if (password !== confirmPassword) { setError('Password confirmation does not match!') }
-
     if (password !== '' && password === confirmPassword) {
       await reauthUser();
       try {
@@ -125,7 +124,7 @@ export default function Profile() {
         setError('Error changing password!');
       }
     }
-
+    //doneEditing();
     if (errorMessage === '') { doneEditing() }
   }
 
@@ -135,29 +134,43 @@ export default function Profile() {
   }
 
   const doneEditing = async () => {
-    if (pw !== '') {
-      setName('');
-      setPhoto('');
-      setEmail('');
-      setPassword('');
-      setOldPassword('');
-      if (displayImg.charAt(0) === 'd' && user.photoURL === null) { // User leaves w/o saving profile, image shouldn't be saved
-        setDisplayImg(stock_img);
-      }
-      if (user.photoURL != null) { setDisplayImg(user.photoURL) }
-      const docRef = doc(db, 'users', user.uid);
-      try {
-        await updateDoc(docRef, {
-          email: user.email,
-          name: user.displayName
-        });
-      }
-      catch (error) { console.log("Error updating user email in db!") }
-      setUpdateAcc(false);
-    } else {
-      setError("Old password is required!");
-      setReadyB(false);
+    // if (pw !== '') {
+    //
+    // } else {
+    //   setError("Old password is required!");
+    //   setReadyB(false);
+    // }
+    setName('');
+    setPhoto('');
+    setEmail('');
+    setPassword('');
+    setOldPassword('');
+    setUpdateAcc(false);
+    if (displayImg.charAt(0) === 'd' && user.photoURL === null) { // User leaves w/o saving profile, image shouldn't be saved
+      setDisplayImg(stock_img);
     }
+    if (user.photoURL != null) { setDisplayImg(user.photoURL) }
+    const docRef = doc(db, 'users', user.uid);
+    try {
+      await updateDoc(docRef, {
+        email: user.email,
+        name: user.displayName
+      });
+    }
+    catch (error) { console.log("Error updating user email in db!") }
+  }
+
+  const discardEdits = () => {
+    setName('');
+    setPhoto('');
+    setEmail('');
+    setPassword('');
+    setOldPassword('');
+    if (displayImg.charAt(0) === 'd' && user.photoURL === null) { // User leaves w/o saving profile, image shouldn't be saved
+      setDisplayImg(stock_img);
+    }
+    if (user.photoURL != null) { setDisplayImg(user.photoURL) }
+    setUpdateAcc(false);
   }
 
   // Reauthorizes users for certain actions
@@ -169,7 +182,7 @@ export default function Profile() {
     } catch (error) {
       console.log("Error code: " + error.code);
       console.log("Error message: " + error.message);
-      setError('Error reauthorizing user!');
+      setError('Error reauthorizing user!\nPassword and/or email not changed');
     }
   }
 
@@ -217,7 +230,7 @@ export default function Profile() {
             </FormControl>
             <FormControl>
               <FormLabel htmlfor='new-email'>Current Email: {user.email}</FormLabel>
-              <Input type='text' placeholder='New email' id='new-email' onChange={(e) => {setEmail(e.target.value)}} />
+              <Input type='email' placeholder='New email' id='new-email' onChange={(e) => {setEmail(e.target.value)}} />
             </FormControl>
             <FormControl>
               <FormLabel htmlfor='new-pw'>New Password: </FormLabel>
@@ -228,14 +241,14 @@ export default function Profile() {
               <Input type='password' placeholder='New password' id='new-pw-c' onChange={(e) => {setConfirmPassword(e.target.value)}} />
             </FormControl>
           </SimpleGrid>
-          <p>Enter current password to apply changes or delete account</p>
           <FormControl isRequired>
             <FormLabel htmlfor='pw-c'>Old Password: </FormLabel>
             <Input type='password' placeholder='Current password' id='pw-c' onChange={(e) => {setOldPassword(e.target.value)}} />
+            <FormHelperText>This is only required for changing email, password, and account deletion.</FormHelperText>
           </FormControl>
           <p id='errorMessage'>{errorMessage}</p>
           <SimpleGrid columns={2} spacing='2vw'>
-            <Button onClick={doneEditing} colorScheme='orange' size='md' variant='outline'>Discard Changes</Button>
+            <Button onClick={discardEdits} colorScheme='orange' size='md' variant='outline'>Discard Changes</Button>
             <Button onClick={submitEdits} colorScheme='green' size='md' variant='outline'>Save Changes</Button>
           </SimpleGrid>
           <Popup trigger={<Button id="deleteAccount" colorScheme='red' size='md' variant='solid'> Delete Account </Button>} modal={true}>

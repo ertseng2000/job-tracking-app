@@ -2,10 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, where, setDoc, getDoc, updateDoc , getDocs, deleteDoc, orderBy, limit} from 'firebase/firestore';
+import { collection, doc, onSnapshot, query, where, setDoc, getDoc, updateDoc , getDocs, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Timeline.css';
-import { useSearchParams } from "react-router-dom";
 import Popup from 'reactjs-popup';
 import NavBarJTR from './Navbar.js';
 import { ChakraProvider, Button} from '@chakra-ui/react';
