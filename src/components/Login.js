@@ -1,11 +1,11 @@
 // Login page for JTR
 
 import React, { useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Login.css';
-import { ChakraProvider, Stack, Button, FormControl, FormErrorMessage, FormLabel, Input} from '@chakra-ui/react';
+import { ChakraProvider, Stack, Button, FormControl, FormErrorMessage, FormLabel, Input, Alert, AlertIcon, AlertTitle, AlertDescription} from '@chakra-ui/react';
 
 export default function Login() {
 
@@ -20,7 +20,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   // Login a user with email & pw using Firebase Auth
-  const loginUser = async () => {
+  const loginUser = async (e) => {
+    e.preventDefault();
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
@@ -100,9 +101,9 @@ export default function Login() {
 
   // Page loading indicator for async/await stuff
   // IDEA Can add some animation or loading wheel in next release maybe
-  if(loading) return (
-    <p id='loadingPage'>Loading...</p>
-  );
+  // if(loading) return (
+  //   <p id='loadingPage'>Loading...</p>
+  // );
 
   const onSubmit = (e) => { e.preventDefault() }
 
@@ -112,7 +113,7 @@ export default function Login() {
         <form onSubmit={loginUser}>
           <Stack maxWidth='60vw' margin='auto' spacing='2vh'>
             <FormControl isRequired>
-              <FormLabel htmlfor='email'>Email Address</FormLabel>
+              <FormLabel htmlfor='email-input' requiredIndicator>Email Address</FormLabel>
               <Input
                   id='email-input'
                   type='email'
@@ -120,7 +121,7 @@ export default function Login() {
               />
             </FormControl>
             <FormControl isRequired>
-              <FormLabel htmlfor='password'>Password</FormLabel>
+              <FormLabel htmlfor='password-input' requiredIndicator>Password</FormLabel>
               <Input
                   id='password-input'
                   type='password'
@@ -129,7 +130,7 @@ export default function Login() {
             </FormControl>
             <p id='errorMessage'>{errorMessage}</p>
             <FormControl>
-              <Button colorScheme='teal' size='sm' variant='outline' type='submit'>Login</Button>
+              <Button colorScheme='teal' size='sm' variant='outline' type='submit' isLoading={loading}>Login</Button>
             </FormControl>
           </Stack>
         </form>
