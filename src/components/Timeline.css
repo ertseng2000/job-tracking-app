@@ -1,0 +1,49 @@
+#timeline-head{
+    font-weight: bold;
+    font-size: 3rem;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+#add-update-button{
+    border: none;
+    border-radius: 20px;
+    background-color: #A3EFDD;
+    font-size: 18px;
+    height: 48px;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: 10px;
+    opacity: 0.75;
+}
+
+
+#delete-app-button{
+    text-decoration: underline;
+    border: none;
+    background-color:#ffffff;
+    color: #00A3FF;
+    font-weight: 700;
+    margin: 10px;
+}
+.timeline-section{
+    border: 2px solid black;
+    border-radius: 15px;
+    width:300px;
+    margin: 0 auto;
+    padding: 10px;
+    margin-top: 20px;
+}
+.timeline-tag{
+    font-weight: 700;
+}
+
+.timeline-button{
+    text-decoration: underline;
+    border: none;
+    background-color:#ffffff;
+    color: #00A3FF;
+    
+    
+}

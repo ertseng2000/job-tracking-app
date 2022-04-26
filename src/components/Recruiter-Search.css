@@ -1,0 +1,27 @@
+#search-head{
+    margin-bottom: 20px;
+}
+
+#email-input-wrapper{
+    margin-bottom: 17px;
+}
+
+.go-button{
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    background-color: #A3FFA6;
+    opacity: 0.75;
+}
+
+#searchButton{
+    margin-left: 10px;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: white;
+}
+
+#searchTextInput{
+    width: 210px;
+}

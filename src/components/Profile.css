@@ -1,0 +1,43 @@
+#warning, #warning2, #deleteConfirm {
+  text-align: center;
+}
+
+#warning2 {
+  color: red;
+  font-weight: bold;
+}
+
+#deleteConfirmButton {
+  color: white;
+}
+
+#profImg {
+  border-radius: 50%;
+  width: 20vh;
+  height: 20vh;
+}
+
+#edit {
+  position: relative;
+  margin-top: 10%;
+}
+
+#deleteAccount {
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+#userName, #userEmail {
+  margin-top: 5vh;
+  font-size: 1.5rem;
+}
+
+#profilePic {
+  margin-left: 1vw;
+}
+
+.profHeader {
+  font-weight: bold;
+  font-size: 3rem;
+  margin: 5vh 0 5vh 0;
+}

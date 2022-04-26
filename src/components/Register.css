@@ -1,0 +1,14 @@
+#loadingPage {
+    margin-top: 45vh;
+}
+
+#register-button{
+    margin-top: 10px;
+}
+
+#email-input{
+    margin-right: 10px;
+}
+#password-input, #password-conf{
+    margin-right: 10px;
+}

@@ -1,0 +1,25 @@
+#errorMessage {
+    color: red;
+  }
+  
+  #loadingPage {
+    margin-top: 45vh;
+  }
+  
+  #head{
+    font-weight: 700;
+  }
+  #register-button{
+    margin-top: 10px;
+  }
+  
+  #login-button{
+    margin-top: 10px;
+  }
+  
+  #email-input{
+    margin-right: 10px;
+  }
+  #password-input{
+    margin-right: 10px;
+  }

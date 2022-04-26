@@ -1,0 +1,14 @@
+#errorMessage {
+  color: red;
+}
+
+#loadingPage {
+  margin-top: 45vh;
+}
+
+#head{
+  margin-top: 30vh;
+  font-weight: bold;
+  font-size: 3rem;
+  margin-bottom: 10vh;
+}
