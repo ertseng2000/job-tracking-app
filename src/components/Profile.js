@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import Popup from 'reactjs-popup';
 import { onAuthStateChanged, deleteUser, updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import {doc, deleteDoc, updateDoc, getDoc} from 'firebase/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from '../firebase.js';
 import './Profile.css';
@@ -41,6 +41,7 @@ export default function Profile() {
   const checkIfSignedIn = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        checkIfRecruiter(user);
         const profilePic = new Image();
         if (user.photoURL === null) { profilePic.src = stock_img }
         else {
@@ -53,6 +54,19 @@ export default function Profile() {
       }
     });
   };
+
+  const checkIfRecruiter = async (currUser) => {
+    const docRef = doc(db, "users", currUser.uid)
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isRecruiter !== null || docSnap.data().isRecruiter !== undefined) {
+        window.location.href="/recruiter-login";
+      }
+    } else {
+      console.log("Error reading isRecruiter flag");
+    }
+  }
 
   // Deletes the user and removes all info from database
   const delUsr = async () => {

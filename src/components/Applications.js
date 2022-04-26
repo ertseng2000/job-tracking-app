@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, onSnapshot, query, setDoc} from 'firebase/firestore';
+import {collection, doc, getDoc, onSnapshot, query, setDoc} from 'firebase/firestore';
 import { auth, db } from '../firebase.js';
 import './Applications.css';
 import Container from 'react-bootstrap/Container';
@@ -44,6 +44,7 @@ export default function Applications() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setName(user.displayName);
+        checkIfRecruiter(user);
         getFirestoreData(auth.currentUser);
         setReady(true);
       } else {
@@ -69,6 +70,18 @@ export default function Applications() {
       })));
       
     });
+  }
+  const checkIfRecruiter = async (currUser) => {
+    const docRef = doc(db, "users", currUser.uid)
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isRecruiter !== null || docSnap.data().isRecruiter !== undefined) {
+        window.location.href="/recruiter-login";
+      }
+    } else {
+      console.log("Error reading isRecruiter flag");
+    }
   }
   // TODO use addDoc and/or setDoc to add new applications
   // https://firebase.google.com/docs/firestore/manage-data/add-data

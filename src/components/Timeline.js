@@ -60,6 +60,7 @@ export default function Timeline() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setName(user.displayName);
+        checkIfRecruiter(user);
         getFirestoreUpdatesData(auth.currentUser);
         getFirestoreApplicationData(auth.currentUser);
         setReady(true);
@@ -68,6 +69,19 @@ export default function Timeline() {
       }
     });
   };
+
+  const checkIfRecruiter = async (currUser) => {
+    const docRef = doc(db, "users", currUser.uid)
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      if (docSnap.data().isRecruiter !== null || docSnap.data().isRecruiter !== undefined) {
+        window.location.href="/recruiter-login";
+      }
+    } else {
+      console.log("Error reading isRecruiter flag");
+    }
+  }
 
   const getFirestoreUpdatesData = (currentUser) => {
     const appPath = 'updates/' + currentUser.uid + '/appUpdates';
