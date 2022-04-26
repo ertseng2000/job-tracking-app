@@ -122,7 +122,7 @@ export default function RecruiterApplications() {
           <div>Fill in this form!</div>
           <input type='text' placeholder='Position' onChange={(e) => {setPosition(e.target.value)}} />
 
-          <input type='text' placeholder='Notes' onChange={(e) => {setNotes(e.target.value)}} />
+          
 
           <button id='submitButton' onClick={submitApplication}>Submit</button>
         </Popup>

@@ -8,6 +8,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithP
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db, provider } from '../firebase.js';
 import './Recruiter-Login.css';
+import { ChakraProvider, Stack, Button, FormControl, FormErrorMessage, FormLabel, Input} from '@chakra-ui/react';
 
 export default function RecruiterRegistration() {
 
@@ -138,24 +139,50 @@ export default function RecruiterRegistration() {
 
   return (
     <>
-      <h1 id = "head">JTR Recruiter Registration</h1>
-      <br />
-      <div id='name'>
-        <input type='text' placeholder='ex: Amazon' onChange={(e) => {setName(e.target.value)}} />
-      </div>
-      <div>
-        <p id='errorMessage'>{errorMessage}</p>
-      </div>
-      <div id='registerLoginUser'>
-        <input id = 'password-input' type='password' placeholder='Password' onChange={(e) => {setPassword(e.target.value)}} />
-        <input id = 'password-conf' type='password' placeholder='Confirm Password' onChange={(e) => {setConfirmPassword(e.target.value)}} />
+      
 
-        <button id='register-button' onClick={registerUser}> Register</button>
-        <br></br>
-
-        <button id='login-button' onClick={goToRecruiterLogin}>Already have an account? Log In!</button>
-        <button id='recruiter-button' onClick={(goToApplicantLogin)}> I'm an applicant</button>
-      </div>
+      <ChakraProvider>
+            <h1 id="head">JTR Recruiter Registration</h1>
+            <form onSubmit={registerUser}>
+                <Stack maxWidth='60vw' margin='auto' spacing='2vh'>
+                    <FormControl isRequired>
+                        <FormLabel htmlfor='name' requiredIndicator>Company Name</FormLabel>
+                        <Input
+                            id='name'
+                            type='name'
+                            onChange={(e) => {setName(e.target.value)}}
+                        />
+                    </FormControl>
+                    
+                    <Stack direction={['column', 'row']} maxWidth='60vw' margin='auto' spacing='2vw'>
+                        <FormControl isRequired>
+                            <FormLabel htmlfor='password-input' requiredIndicator>Password</FormLabel>
+                            <Input
+                                id='password-input'
+                                type='password'
+                                onChange={(e) => {setPassword(e.target.value)}}
+                            />
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormLabel htmlfor='password-input-c' requiredIndicator>Confirm Password</FormLabel>
+                            <Input
+                                id='password-input-c'
+                                type='password'
+                                onChange={(e) => {setConfirmPassword(e.target.value)}}
+                            />
+                        </FormControl>
+                    </Stack>
+                    <p id='errorMessage'>{errorMessage}</p>
+                    <FormControl>
+                        <Button colorScheme='teal' size='sm' variant='outline' type='submit' isLoading={loading}>Register</Button>
+                    </FormControl>
+                </Stack>
+            </form>
+            <Stack maxWidth='25vw' margin='auto' spacing='2vh' marginTop='5vh'>
+                <Button colorSceme='teal' size='sm' variant='ghost' onClick={goToRecruiterLogin}>Already have an account? Log In!</Button>
+                <Button colorSceme='teal' size='sm' variant='ghost' onClick={goToApplicantLogin}>I'm an applicant</Button>
+            </Stack>
+        </ChakraProvider>
     </>
   );
 }
