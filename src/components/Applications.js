@@ -113,6 +113,18 @@ export default function Applications() {
     //Date string is 15 chars, + a space between status and date
     return statusString.substring(0, statusString.length - 16)
   }
+
+  
+  const renderNotes =  (notes) =>{
+    if(notes !== ''){
+      return( 
+      <Popup trigger={<Button id = "notes-button" colorScheme='gray' variant='ghost' size='sm'>Notes</Button>} position="right center" on="hover">
+        {notes}
+      </Popup>)
+    }
+    return (<Button id = "notes-button" colorScheme='gray' variant='ghost' size='sm'>Notes</Button>)
+    
+  }
   // Renders page after loading
   if (pageReady) {
     
@@ -169,9 +181,7 @@ export default function Applications() {
             <Col>{application.status}</Col>
             <Col>
             
-            <Popup trigger={<Button id = "notes-button" colorScheme='gray' variant='ghost' size='sm'>Notes</Button>} position="right center" on="hover">
-              {application.notes}
-            </Popup>
+            {renderNotes(application.notes)}
             
             </Col>
             <Col>
