@@ -12,6 +12,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import RecruiterNavBarJTR from './Recruiter-NavBar.js';
 
+
 export default function RecruiterSearch() {
 
   useEffect(() => {
@@ -91,7 +92,10 @@ export default function RecruiterSearch() {
   const renderSearchedApplicant = () => {
       if(searchedApplicant.id !== ''){
           return <>
-          <button id='applicantGo' onClick={() => goToAppListPage(searchedApplicant)}>{searchedApplicant.name}</button>
+         
+          We found {searchedApplicant.name}'s profile:
+          <br></br>
+          <button className='go-button' onClick={() => goToAppListPage(searchedApplicant)}>Go!</button>
           </>;
       }return <>No Results</>;
 
@@ -112,13 +116,11 @@ export default function RecruiterSearch() {
         <RecruiterNavBarJTR></RecruiterNavBarJTR>
         <h1 id = "search-head">Enter An Applicant's Email</h1>
         <div id='email-input-wrapper'>
-            <input type='text' placeholder='ex: jeffbezos@hotmail.com' onChange={(e) => {setApplicantEmail(e.target.value)}} />
+            <input type='text' id = "searchTextInput" placeholder='ex: jeffbezos@hotmail.com' onChange={(e) => {setApplicantEmail(e.target.value)}} />
+            <button id='searchButton' onClick={searchApplicant}> Search! </button>
         </div>
 
-        <button id='submitButton' onClick={searchApplicant}>Search!</button>
-
-        <br></br>
-        <hr/>
+        
         {renderSearchedApplicant()}
       </>
     );
